@@ -179,7 +179,7 @@ export default async function HomePage() {
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-lg">
               🧩
             </span>
-            <span className="font-semibold tracking-tight">ARC Swap</span>
+            <span className="font-semibold tracking-tight">ARC TRADERS</span>
           </Link>
 
           <nav className="flex items-center gap-2">
@@ -251,7 +251,7 @@ export default async function HomePage() {
                 ) : (
                   <>
                     <Pill>sem tags ainda</Pill>
-                    <Pill>poste um anúncio 😈</Pill>
+                    <Pill>poste um anúncio </Pill>
                   </>
                 )}
               </div>
