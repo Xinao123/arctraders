@@ -198,6 +198,12 @@ export default async function HomePage() {
             >
               Postar troca
             </Link>
+             <Link
+              href="/faq"
+              className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
+            >
+              FAQ
+            </Link>
           </nav>
         </div>
       </header>
