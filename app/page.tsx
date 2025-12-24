@@ -83,9 +83,6 @@ function ListingCard({
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
-        <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/45 px-2 py-1 text-[11px] text-white/80 backdrop-blur">
-          anúncio com print
-        </div>
       </div>
 
       <div className="mt-3">
