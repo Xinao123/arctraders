@@ -491,8 +491,6 @@ export default function NewListingPage() {
   </div>
 </div>
 
-</div>
-
 
             <div className="mt-4">
               <label className="text-sm font-semibold">Disponibilidade</label>
