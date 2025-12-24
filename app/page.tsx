@@ -250,8 +250,8 @@ export default async function HomePage() {
               <div className="font-semibold text-white">Regras rápidas</div>
               <ul className="mt-3 space-y-2">
                 <li>✅ Print obrigatório (recorta/zoom pra ficar legível).</li>
-                <li>✅ Troca é troca: nada de dinheiro real (RMT).</li>
-                <li>✅ Se pedirem Pix, “reserva” ou link suspeito: ignora e reporta.</li>
+                <li>✅ .</li>
+                <li>✅ .</li>
               </ul>
             </div>
 
@@ -351,7 +351,7 @@ export default async function HomePage() {
         </div>
 
         <footer className="mt-12 border-t border-white/10 pt-6 text-xs text-white/50">
-          Fan-made, sem afiliação oficial. Sem RMT. Se pedir dinheiro real, é block e vida que segue. 🤝
+          Fan-made, sem afiliação oficial.🤝
         </footer>
       </section>
     </main>

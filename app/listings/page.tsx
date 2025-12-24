@@ -18,19 +18,16 @@ function firstParam(sp: SearchParams, key: string, fallback = "") {
 }
 
 function formatDateBR(d: Date) {
-  try {
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(d);
-  } catch {
-    return d.toISOString();
-  }
+  return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(d);
 }
-
 function timeLeft(expiresAt: Date, now: Date) {
   const ms = expiresAt.getTime() - now.getTime();
   if (ms <= 0) return "expirado";
