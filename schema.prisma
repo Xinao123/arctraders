@@ -82,6 +82,10 @@ model Listing {
 
   @@index([status, createdAt])
   @@index([userId])
+  expiresAt   DateTime?
+imageBucket String?
+imagePath   String?
+@@index([expiresAt])
 }
 
 model Tag {
