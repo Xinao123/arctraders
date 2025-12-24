@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { unstable_noStore as noStore } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -135,10 +136,10 @@ export default async function ListingsPage({ searchParams }: PageProps) {
       };
     }
 
-    const orderBy =
-      sort === "expiring"
-        ? [{ expiresAt: "asc" }, { createdAt: "desc" }]
-        : [{ createdAt: "desc" }];
+const orderBy: Prisma.ListingOrderByWithRelationInput[] =
+  sort === "expiring"
+    ? [{ expiresAt: "asc" }, { createdAt: "desc" }]
+    : [{ createdAt: "desc" }];
 
     const [rows, regionRows, tagCounts, total] = await Promise.all([
       prisma.listing.findMany({
