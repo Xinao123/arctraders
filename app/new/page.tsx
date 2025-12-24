@@ -472,6 +472,23 @@ export default function NewListingPage() {
             </div>
 
             <div className="mt-4">
+  <label className="text-sm font-semibold">Expiração do anúncio</label>
+  <select
+    name="expiresInDays"
+    defaultValue="3"
+    className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-white"
+  >
+    <option value="1">1 dia</option>
+    <option value="3">3 dias</option>
+    <option value="7">7 dias</option>
+  </select>
+  <div className="mt-2 text-xs text-white/50">
+    Depois disso o anúncio some do feed e é removido automaticamente.
+  </div>
+</div>
+
+
+            <div className="mt-4">
               <label className="text-sm font-semibold">Disponibilidade</label>
               <input
                 name="availabilityNote"
