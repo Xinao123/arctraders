@@ -9,7 +9,6 @@
     "start": "next start",
     "lint": "next lint",
     
-    "postinstall": "prisma generate",
 
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
