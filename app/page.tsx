@@ -2,13 +2,31 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 
-export const revalidate = 30; // atualiza a home a cada 30s (muda pra 60/300 se quiser)
+export const revalidate = 30;
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70 backdrop-blur">
       {children}
     </span>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+      <div className="text-2xl font-semibold tracking-tight text-white">{value}</div>
+      <div className="mt-1 text-xs text-white/60">{label}</div>
+      {hint ? <div className="mt-2 text-[11px] text-white/45">{hint}</div> : null}
+    </div>
   );
 }
 
@@ -20,35 +38,22 @@ function Pill({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
-      <div className="text-sm font-semibold text-white">{value}</div>
-      <div className="text-xs text-white/60">{label}</div>
-    </div>
-  );
-}
-
-function Feature({
+function SectionTitle({
   title,
-  desc,
-  icon,
+  subtitle,
+  right,
 }: {
   title: string;
-  desc: string;
-  icon: string;
+  subtitle?: string;
+  right?: React.ReactNode;
 }) {
   return (
-    <div className="group rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:border-white/20 hover:bg-white/10">
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-lg">
-          {icon}
-        </div>
-        <div>
-          <div className="text-base font-semibold text-white">{title}</div>
-          <div className="mt-1 text-sm leading-relaxed text-white/70">{desc}</div>
-        </div>
+    <div className="flex items-end justify-between gap-4">
+      <div>
+        <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
+        {subtitle ? <p className="mt-2 text-sm text-white/70">{subtitle}</p> : null}
       </div>
+      {right ? <div className="shrink-0">{right}</div> : null}
     </div>
   );
 }
@@ -63,13 +68,13 @@ function ListingCard({
     wantText: string;
     region: string | null;
     createdAt: Date;
-    user: { steamProfileUrl: string | null; discordHandle: string | null; displayName: string | null };
+    user: { displayName: string | null; steamProfileUrl: string | null; discordHandle: string | null };
     tags: { tagId: string; tag: { name: string } }[];
   };
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10">
-      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-black/20">
+    <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10">
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/20">
         <div className="aspect-[16/10]" />
         <Image
           src={listing.imageUrl}
@@ -78,21 +83,17 @@ function ListingCard({
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
-        <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/40 px-2 py-1 text-[11px] text-white/70">
-          print
+        <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/45 px-2 py-1 text-[11px] text-white/80 backdrop-blur">
+          print real
         </div>
       </div>
 
       <div className="mt-3">
         <div className="text-xs text-white/50">Ofereço</div>
-        <div className="mt-1 line-clamp-1 text-sm font-semibold text-white">
-          {listing.offerText}
-        </div>
+        <div className="mt-1 line-clamp-1 text-sm font-semibold text-white">{listing.offerText}</div>
 
         <div className="mt-3 text-xs text-white/50">Quero</div>
-        <div className="mt-1 line-clamp-1 text-sm text-white/80">
-          {listing.wantText}
-        </div>
+        <div className="mt-1 line-clamp-1 text-sm text-white/80">{listing.wantText}</div>
 
         <div className="mt-3 flex flex-wrap gap-2">
           {listing.tags.slice(0, 6).map((t) => (
@@ -100,10 +101,8 @@ function ListingCard({
           ))}
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-xs text-white/50">
-            {listing.region ?? "—"}
-          </div>
+        <div className="mt-4 flex items-center justify-between text-xs text-white/55">
+          <span>{listing.region ?? "—"}</span>
 
           {listing.user?.steamProfileUrl ? (
             <a
@@ -114,8 +113,12 @@ function ListingCard({
             >
               Steam
             </a>
+          ) : listing.user?.discordHandle ? (
+            <span className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[11px] text-white/70">
+              Discord ok
+            </span>
           ) : (
-            <span className="text-xs text-white/40">sem steam</span>
+            <span className="text-white/35">sem contato</span>
           )}
         </div>
       </div>
@@ -143,18 +146,18 @@ export default async function HomePage() {
         by: ["tagId"],
         _count: { tagId: true },
         orderBy: { _count: { tagId: "desc" } },
-        take: 8,
+        take: 10,
       }),
     ]);
 
-  const topTags = topTagCounts.length
+  const tags = topTagCounts.length
     ? await prisma.tag.findMany({
         where: { id: { in: topTagCounts.map((t) => t.tagId) } },
       })
     : [];
 
-  const tagMap = new Map(topTags.map((t) => [t.id, t.name]));
-  const topTagsWithCounts = topTagCounts
+  const tagMap = new Map(tags.map((t) => [t.id, t.name]));
+  const topTags = topTagCounts
     .map((t) => ({
       id: t.tagId,
       name: tagMap.get(t.tagId) ?? "tag",
@@ -166,8 +169,8 @@ export default async function HomePage() {
     <main className="min-h-screen bg-[#07080c] text-white">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(60%_40%_at_50%_0%,rgba(255,255,255,0.10),rgba(7,8,12,0))]" />
-        <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(to_right,rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:64px_64px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_50%_0%,rgba(255,255,255,0.12),rgba(7,8,12,0))]" />
+        <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
         <div className="absolute -top-24 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
       </div>
@@ -177,9 +180,9 @@ export default async function HomePage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-lg">
-              🧩
+              🧠
             </span>
-            <span className="font-semibold tracking-tight">ARC TRADERS</span>
+            <span className="font-semibold tracking-tight">ARC Traders</span>
           </Link>
 
           <nav className="flex items-center gap-2">
@@ -187,13 +190,13 @@ export default async function HomePage() {
               href="/listings"
               className="rounded-xl px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white"
             >
-              Anúncios
+              Feed
             </Link>
             <Link
               href="/new"
               className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-black hover:opacity-90"
             >
-              Criar anúncio
+              Postar troca
             </Link>
           </nav>
         </div>
@@ -203,17 +206,15 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-14 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <Badge>
-              ⚡ print + “quero em troca” + perfil <span className="text-white/40">|</span> sem enrolação
-            </Badge>
+            <Badge>⚡ print + texto + contato · rápido e direto</Badge>
 
             <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-              Trocas do ARC Raiders com cara de comunidade, não de cassino.
+              Seu loot tá parado. Bora transformar em upgrade.
             </h1>
 
             <p className="mt-4 text-base leading-relaxed text-white/70">
-              Anúncios reais, feed limpo e contato direto. Sem papinho, sem “manda pix pra reservar”.
-              Postou, apareceu.
+              Aqui a troca é simples: você posta o print do item, diz o que quer em troca e deixa Steam ou Discord.
+              A galera acha pelo feed e pelas tags, chama e fecha. Sem novela.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -221,29 +222,39 @@ export default async function HomePage() {
                 href="/new"
                 className="inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black hover:opacity-90"
               >
-                Criar meu anúncio
+                Quero postar agora
               </Link>
               <Link
                 href="/listings"
                 className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
               >
-                Explorar anúncios
+                Ver o feed ao vivo
               </Link>
             </div>
 
-            {/* Stats reais */}
+            {/* Real stats */}
             <div className="mt-7 grid grid-cols-3 gap-3">
-              <Stat label="Anúncios no total" value={String(totalListings)} />
-              <Stat label="Novos (24h)" value={String(listingsLast24h)} />
-              <Stat label="Usuários" value={String(totalUsers)} />
+              <Stat label="Anúncios no total" value={String(totalListings)} hint="Tudo postado pela galera" />
+              <Stat label="Novos nas 24h" value={String(listingsLast24h)} hint="Movimento recente no feed" />
+              <Stat label="Usuários" value={String(totalUsers)} hint="Perfis cadastrados" />
             </div>
 
-            {/* Tags reais */}
+            {/* Trust / rules */}
+            <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-white/70 backdrop-blur">
+              <div className="font-semibold text-white">Regras rápidas (pra não virar bagunça)</div>
+              <ul className="mt-3 space-y-2">
+                <li>✅ Print obrigatório (recorta e dá zoom se precisar).</li>
+                <li>✅ Nada de dinheiro real (RMT). Troca é troca.</li>
+                <li>✅ Se alguém pedir Pix, link suspeito ou “reserva”, só ignora e reporta.</li>
+              </ul>
+            </div>
+
+            {/* Trending tags */}
             <div className="mt-6">
-              <div className="text-xs text-white/50">Tags populares agora</div>
+              <div className="text-xs text-white/50">O que tá bombando agora</div>
               <div className="mt-2 flex flex-wrap gap-2">
-                {topTagsWithCounts.length ? (
-                  topTagsWithCounts.map((t) => (
+                {topTags.length ? (
+                  topTags.map((t) => (
                     <Pill key={t.id}>
                       {t.name} <span className="text-white/40">({t.count})</span>
                     </Pill>
@@ -251,23 +262,21 @@ export default async function HomePage() {
                 ) : (
                   <>
                     <Pill>sem tags ainda</Pill>
-                    <Pill>poste um anúncio </Pill>
+                    <Pill>posta e inaugura 😈</Pill>
                   </>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Preview real */}
+          {/* Live feed preview */}
           <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <div className="text-sm font-semibold">Últimos anúncios</div>
-                <div className="text-xs text-white/60">isso aqui é do banco, sem fake</div>
+                <div className="text-sm font-semibold">Feed ao vivo</div>
+                <div className="text-xs text-white/60">puxado do banco, sem mock</div>
               </div>
-              <div className="text-xs text-white/50">
-                últimos 24h: {listingsLast24h}
-              </div>
+              <div className="text-xs text-white/50">atividade 24h: {listingsLast24h}</div>
             </div>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -276,55 +285,68 @@ export default async function HomePage() {
               ))}
             </div>
 
+            {latestListings.length === 0 ? (
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-6 text-sm text-white/70">
+                Ainda não tem anúncio. O primeiro que postar vira lenda local.
+              </div>
+            ) : null}
+
             <div className="mt-4 flex justify-end">
               <Link
                 href="/listings"
                 className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
               >
-                Ver feed completo
+                Abrir feed completo
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
+      {/* How it works */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-semibold">Como funciona</h2>
-            <p className="mt-2 text-sm text-white/70">
-              Três passos, sem tutorial infinito.
-            </p>
-          </div>
-          <Link
-            href="/new"
-            className="hidden rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 sm:inline-flex"
-          >
-            Postar agora
-          </Link>
-        </div>
+        <SectionTitle
+          title="Como funciona"
+          subtitle="Três passos e você já tá trocando."
+          right={
+            <Link
+              href="/new"
+              className="hidden rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 sm:inline-flex"
+            >
+              Postar troca
+            </Link>
+          }
+        />
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <Feature
-            icon="🖼️"
-            title="Posta o print"
-            desc="O print dá confiança. E agora ele aparece no feed real."
-          />
-          <Feature
-            icon="🔁"
-            title="Diz o que quer"
-            desc="Texto e tags fazem a busca funcionar de verdade."
-          />
-          <Feature
-            icon="🤝"
-            title="Combina e fecha"
-            desc="Steam/Discord pra chamar e pronto. Sem drama."
-          />
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <div className="text-lg">🖼️</div>
+            <div className="mt-3 text-base font-semibold">Print nítido</div>
+            <div className="mt-2 text-sm text-white/70">
+              Sobe o print e recorta pro item ficar claro. Menos poluição, mais confiança.
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <div className="text-lg">🏷️</div>
+            <div className="mt-3 text-base font-semibold">Texto e tags</div>
+            <div className="mt-2 text-sm text-white/70">
+              “Ofereço” e “Quero” bem escritos fazem o match acontecer. Tags ajudam na busca.
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <div className="text-lg">🤝</div>
+            <div className="mt-3 text-base font-semibold">Contato direto</div>
+            <div className="mt-2 text-sm text-white/70">
+              Deixa Steam ou Discord. A negociação rola fora do site, sem atrito.
+            </div>
+          </div>
         </div>
 
+        {/* Footer */}
         <footer className="mt-12 border-t border-white/10 pt-6 text-xs text-white/50">
-          Fan-made, sem afiliação oficial. Sem RMT. Seja gente boa. 🤝
+          Fan-made, sem afiliação oficial. Regra número 1: sem RMT. Se pedir dinheiro real, é block e vida que segue. 🤝
         </footer>
       </section>
     </main>
