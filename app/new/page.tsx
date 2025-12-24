@@ -207,6 +207,8 @@ export default function NewListingPage() {
 
     const formEl = e.currentTarget;
     const formData = new FormData(formEl);
+    const expiresInDays = Number(formData.get("expiresInDays") ?? 3);
+
 
     try {
       // Usa o arquivo final (recortado). Se o user não aplicou crop, usa o original mesmo.
@@ -279,6 +281,7 @@ export default function NewListingPage() {
         tags: String(formData.get("tags") ?? "").trim(),
         region: String(formData.get("region") ?? "").trim(),
         availabilityNote: String(formData.get("availabilityNote") ?? "").trim(),
+        expiresInDays,
 
         displayName: String(formData.get("displayName") ?? "").trim(),
         steamProfileUrl: steamProfileUrl || null,

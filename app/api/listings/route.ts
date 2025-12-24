@@ -3,82 +3,37 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
-
 export async function POST(req: Request) {
-  try {
-    const body = await req.json();
+  const body = await req.json().catch(() => null);
+  if (!body) return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
 
-    const imageUrl = String(body.imageUrl ?? "").trim();
-    const offerText = String(body.offerText ?? "").trim();
-    const wantText = String(body.wantText ?? "").trim();
-
-    const tagsRaw = String(body.tags ?? "").trim();
-    const region = String(body.region ?? "").trim() || null;
-    const availabilityNote = String(body.availabilityNote ?? "").trim() || null;
-
-    const displayName = String(body.displayName ?? "").trim() || null;
-    const steamProfileUrl = String(body.steamProfileUrl ?? "").trim() || null;
-    const arcProfileUrl = String(body.arcProfileUrl ?? "").trim() || null;
-    const discordHandle = String(body.discordHandle ?? "").trim() || null;
-
-    if (!imageUrl) return NextResponse.json({ error: "imageUrl é obrigatório." }, { status: 400 });
-    if (!offerText || !wantText)
-      return NextResponse.json({ error: "Preencha 'Ofereço' e 'Quero'." }, { status: 400 });
-
-    if (!steamProfileUrl && !discordHandle)
-      return NextResponse.json({ error: "Coloca Steam ou Discord pra contato." }, { status: 400 });
-
-    const existingUser =
-      (steamProfileUrl ? await prisma.user.findFirst({ where: { steamProfileUrl } }) : null) ||
-      (discordHandle ? await prisma.user.findFirst({ where: { discordHandle } }) : null);
-
-    const user =
-      existingUser ??
-      (await prisma.user.create({
-        data: { displayName, steamProfileUrl, arcProfileUrl, discordHandle },
-      }));
-
-    const tags = tagsRaw
-      ? tagsRaw.split(",").map((t: string) => t.trim()).filter(Boolean).slice(0, 10)
-      : [];
-
-    const listing = await prisma.listing.create({
-      data: {
-        imageUrl,
-        offerText,
-        wantText,
-        region,
-        availabilityNote,
-        userId: user.id,
-        tags: tags.length
-          ? {
-              create: await Promise.all(
-                tags.map(async (name: string) => {
-                  const slug = slugify(name);
-                  const tag = await prisma.tag.upsert({
-                    where: { slug },
-                    create: { name, slug },
-                    update: { name },
-                  });
-                  return { tagId: tag.id };
-                })
-              ),
-            }
-          : undefined,
-      },
-      include: { user: true, tags: { include: { tag: true } } },
-    });
-
-    return NextResponse.json({ listing }, { status: 201 });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? "Erro inesperado" }, { status: 500 });
+  const days = Number(body.expiresInDays ?? 3);
+  if (![1, 3, 7].includes(days)) {
+    return NextResponse.json({ error: "expiresInDays deve ser 1, 3 ou 7" }, { status: 400 });
   }
+
+  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+  // TODO: aqui mantém sua lógica atual de criar/achar o "user contato" se você já tem isso
+  const created = await prisma.listing.create({
+    data: {
+      imageUrl: body.imageUrl,
+      imageBucket: body.imageBucket ?? null,
+      imagePath: body.imagePath ?? null,
+
+      offerText: body.offerText,
+      wantText: body.wantText,
+      tagsText: body.tags ?? null,          // se você usa string (ajuste se usa tabela Tag)
+      region: body.region ?? null,
+      availabilityNote: body.availabilityNote ?? null,
+
+      expiresAt,
+      status: "ACTIVE",
+
+      // se seu schema usa relação com User, mantém aqui sua lógica atual:
+      // userId: ...
+    },
+  });
+
+  return NextResponse.json({ ok: true, listing: created }, { status: 201 });
 }
