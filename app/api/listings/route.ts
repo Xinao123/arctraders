@@ -3,6 +3,19 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+function computeExpiresAt(expiresIn?: string | null) {
+  const now = new Date();
+  const key = (expiresIn ?? "3d").toLowerCase();
+
+  if (key === "5m") return new Date(now.getTime() + 5 * 60 * 1000);
+  if (key === "1d") return new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000);
+  if (key === "3d") return new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+  if (key === "7d") return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  // fallback seguro
+  return new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+}
+
 function slugify(input: string) {
   return input
     .toLowerCase()

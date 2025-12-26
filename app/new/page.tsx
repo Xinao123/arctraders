@@ -124,7 +124,7 @@ export default function NewListingPage() {
   const [region, setRegion] = useState("");
   const [steamProfileUrl, setSteamProfileUrl] = useState("");
   const [discordHandle, setDiscordHandle] = useState("");
-  const [expiresInDays, setExpiresInDays] = useState<1 | 3 | 7>(3);
+  const [expiresIn, setExpiresIn] = useState<"5m" | "1d" | "3d" | "7d">("3d");
 
   // Upload / status
   const [submitting, setSubmitting] = useState(false);
@@ -241,7 +241,7 @@ export default function NewListingPage() {
           tags,
           steamProfileUrl: steamProfileUrl.trim() || null,
           discordHandle: discordHandle.trim() || null,
-          expiresInDays,
+          expiresIn,
         }),
       });
 
@@ -389,15 +389,17 @@ export default function NewListingPage() {
 
                 <div>
                   <label className="text-xs font-semibold text-white/70">Expiração</label>
-                  <select
-                    value={expiresInDays}
-                    onChange={(e) => setExpiresInDays(Number(e.target.value) as 1 | 3 | 7)}
-                    className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-white"
-                  >
-                    <option value={1}>1 dia</option>
-                    <option value={3}>3 dias</option>
-                    <option value={7}>7 dias</option>
-                  </select>
+              <select
+  value={expiresIn}
+  onChange={(e) => setExpiresIn(e.target.value as "5m" | "1d" | "3d" | "7d")}
+  className="mt-2 w-full rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-white"
+>
+  <option value="5m">5 minutos (teste)</option>
+  <option value="1d">1 dia</option>
+  <option value="3d">3 dias</option>
+  <option value="7d">7 dias</option>  
+  </select>
+
                   <div className="mt-2 text-xs text-white/50">
                     Quando expirar, o anúncio some do feed automaticamente.
                   </div>
