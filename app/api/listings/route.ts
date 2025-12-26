@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       ? tagsRaw.split(",").map((t: string) => t.trim()).filter(Boolean).slice(0, 10)
       : [];
 
-      const days = Number(body.expiresInDays ?? 3);
+      const days = Number(body.expiresIn ?? 3);
 if (![1, 3, 7].includes(days)) {
   return NextResponse.json({ error: "Expiração inválida (use 1, 3 ou 7 dias)." }, { status: 400 });
 }
@@ -79,7 +79,7 @@ const listings = await prisma.listing.findMany({
   include: { user: true, tags: { include: { tag: true } } },
 });
 
-const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+const expiresAt = computeExpiresAt(body.expiresIn);
 
     const listing = await prisma.listing.create({
       data: {
