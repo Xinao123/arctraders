@@ -32,28 +32,58 @@ function createImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-// ✅ Sem limite de pixel: canvas = tamanho exato do recorte
+function getRadianAngle(deg: number) {
+  return (deg * Math.PI) / 180;
+}
+
+function rotateSize(width: number, height: number, rotation: number) {
+  const rotRad = getRadianAngle(rotation);
+  return {
+    width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
+    height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
+  };
+}
+
+// ✅ Sem limite de pixel: canvas final = tamanho exato do recorte.
+// ✅ Com rotação: primeiro desenha a imagem girada num canvas “safe”, depois recorta.
 async function cropToFile(
   imageSrc: string,
   crop: PixelCrop,
+  rotationDeg = 0,
   filename = "crop.jpg",
   mime: "image/jpeg" | "image/png" | "image/webp" = "image/jpeg",
   quality = 0.92
 ): Promise<File> {
   const image = await createImage(imageSrc);
 
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Canvas ctx não disponível.");
+  const rotRad = getRadianAngle(rotationDeg);
+
+  // canvas “safe” com a imagem rotacionada inteira
+  const safeCanvas = document.createElement("canvas");
+  const safeCtx = safeCanvas.getContext("2d");
+  if (!safeCtx) throw new Error("Canvas ctx não disponível.");
+
+  const { width: bW, height: bH } = rotateSize(image.width, image.height, rotationDeg);
+  safeCanvas.width = Math.ceil(bW);
+  safeCanvas.height = Math.ceil(bH);
+
+  safeCtx.translate(safeCanvas.width / 2, safeCanvas.height / 2);
+  safeCtx.rotate(rotRad);
+  safeCtx.translate(-image.width / 2, -image.height / 2);
+  safeCtx.drawImage(image, 0, 0);
+
+  // canvas final: exatamente o tamanho do recorte
+  const outCanvas = document.createElement("canvas");
+  const outCtx = outCanvas.getContext("2d");
+  if (!outCtx) throw new Error("Canvas ctx não disponível.");
 
   const w = Math.max(1, Math.round(crop.width));
   const h = Math.max(1, Math.round(crop.height));
+  outCanvas.width = w;
+  outCanvas.height = h;
 
-  canvas.width = w;
-  canvas.height = h;
-
-  ctx.drawImage(
-    image,
+  outCtx.drawImage(
+    safeCanvas,
     Math.round(crop.x),
     Math.round(crop.y),
     w,
@@ -65,7 +95,7 @@ async function cropToFile(
   );
 
   const blob: Blob = await new Promise((resolve, reject) => {
-    canvas.toBlob(
+    outCanvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error("Falha ao gerar blob do recorte."))),
       mime,
       quality
@@ -115,6 +145,7 @@ export default function NewListingPage() {
 
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0); // ✅ rotação em graus (0/90/180/270)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<PixelCrop | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -132,7 +163,6 @@ export default function NewListingPage() {
   function onPickFile(file: File) {
     setError(null);
 
-    // revoke old URLs
     if (originalPreview) URL.revokeObjectURL(originalPreview);
     if (croppedPreview) URL.revokeObjectURL(croppedPreview);
     if (rawSrc) URL.revokeObjectURL(rawSrc);
@@ -147,6 +177,7 @@ export default function NewListingPage() {
     setRawSrc(url);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    setRotation(0);
     setCroppedAreaPixels(null);
     setCropMode("horizontal");
     setIsCropping(true);
@@ -183,12 +214,9 @@ export default function NewListingPage() {
       const fd = new FormData();
       fd.append("file", fileToUpload);
 
-      const uploadRes = await fetch("/api/uploads", {
-        method: "POST",
-        body: fd,
-      });
-
+      const uploadRes = await fetch("/api/uploads", { method: "POST", body: fd });
       const up = await safeJson(uploadRes);
+
       if (!up.ok) {
         throw new Error(
           up.json?.error ??
@@ -196,13 +224,10 @@ export default function NewListingPage() {
         );
       }
 
-      // aceita formatos comuns
       const imageUrl =
         up.json?.publicUrl ?? up.json?.url ?? up.json?.imageUrl ?? up.json?.data?.publicUrl;
 
-      if (!imageUrl) {
-        throw new Error("Upload ok, mas não veio publicUrl/url na resposta.");
-      }
+      if (!imageUrl) throw new Error("Upload ok, mas não veio publicUrl/url na resposta.");
 
       // 2) create listing
       const listingRes = await fetch("/api/listings", {
@@ -213,7 +238,7 @@ export default function NewListingPage() {
           offerText: offerText.trim(),
           wantText: wantText.trim(),
           region: region.trim() || null,
-          tags, // array
+          tags,
           steamProfileUrl: steamProfileUrl.trim() || null,
           discordHandle: discordHandle.trim() || null,
           expiresInDays,
@@ -446,23 +471,14 @@ export default function NewListingPage() {
 
             <div className="mt-4">
               {croppedPreview || originalPreview ? (
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-                  <div className="aspect-[16/10] w-full" />
+                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+                  <div className="aspect-[16/10]" />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={croppedPreview ?? originalPreview!}
                     alt="Preview"
-                    className="absolute -mt-[calc(62.5%-0px)] hidden"
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
-                  {/* truque: usa wrapper relativo */}
-                  <div className="relative -mt-[62.5%] w-full">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={croppedPreview ?? originalPreview!}
-                      alt="Preview"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
                 </div>
               ) : (
                 <div className="rounded-2xl border border-dashed border-white/15 bg-black/20 p-6 text-sm text-white/60">
@@ -480,6 +496,7 @@ export default function NewListingPage() {
                   setRawSrc(originalPreview);
                   setCrop({ x: 0, y: 0 });
                   setZoom(1);
+                  setRotation(0);
                   setCroppedAreaPixels(null);
                   setIsCropping(true);
                 }}
@@ -492,7 +509,6 @@ export default function NewListingPage() {
                 type="button"
                 disabled={!croppedPreview}
                 onClick={() => {
-                  // volta pro original
                   if (croppedPreview) URL.revokeObjectURL(croppedPreview);
                   setCroppedPreview(null);
                   setCroppedFile(null);
@@ -526,7 +542,7 @@ export default function NewListingPage() {
               <div>
                 <div className="text-base font-semibold">Recortar imagem</div>
                 <div className="text-xs text-white/60">
-                  Escolhe horizontal/vertical e ajusta o zoom. O recorte sai na resolução original (sem limitar pixels).
+                  Horizontal/vertical + zoom + rotação. O recorte sai na resolução original (sem limitar pixels).
                 </div>
               </div>
 
@@ -553,6 +569,16 @@ export default function NewListingPage() {
                 >
                   Vertical
                 </button>
+
+                {/* ✅ Botão girar 90° */}
+                <button
+                  type="button"
+                  onClick={() => setRotation((r) => (r + 90) % 360)}
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10"
+                  title="Girar 90°"
+                >
+                  ↻ Girar 90°
+                </button>
               </div>
             </div>
 
@@ -563,6 +589,7 @@ export default function NewListingPage() {
                   image={rawSrc}
                   crop={crop}
                   zoom={zoom}
+                  rotation={rotation}
                   aspect={aspect}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
@@ -584,7 +611,7 @@ export default function NewListingPage() {
                 />
 
                 <div className="mt-4 text-xs text-white/60">
-                  Dica: item grande + HUD pequeno = anúncio que chama clique.
+                  Rotação atual: <span className="text-white/80">{rotation}°</span>
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2">
@@ -597,6 +624,7 @@ export default function NewListingPage() {
                         const file = await cropToFile(
                           rawSrc,
                           croppedAreaPixels,
+                          rotation,
                           `arc-traders-${Date.now()}.jpg`,
                           "image/jpeg",
                           0.92
@@ -621,9 +649,7 @@ export default function NewListingPage() {
 
                   <button
                     type="button"
-                    onClick={() => {
-                      setIsCropping(false);
-                    }}
+                    onClick={() => setIsCropping(false)}
                     className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
                   >
                     Cancelar
@@ -631,7 +657,7 @@ export default function NewListingPage() {
                 </div>
 
                 <div className="mt-4 text-[11px] text-white/45">
-                  Obs: “sem limite de pixel” = o recorte pode ficar pesado se seu print for 4K e você recortar um pedaço grande.
+                  Obs: sem limite de pixel = se o print for 4K e o recorte grande, o arquivo pode ficar pesado.
                 </div>
               </div>
             </div>
