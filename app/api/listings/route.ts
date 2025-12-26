@@ -6,25 +6,32 @@ export const runtime = "nodejs";
 
 type ExpiresKey = "5m" | "1d" | "3d" | "7d";
 
-function computeExpiresAt(key: ExpiresKey) {
-  const now = Date.now();
-  switch (key) {
-    case "5m":
-      return new Date(now + 5 * 60 * 1000);
-    case "1d":
-      return new Date(now + 1 * 24 * 60 * 60 * 1000);
-    case "3d":
-      return new Date(now + 3 * 24 * 60 * 60 * 1000);
-    case "7d":
-      return new Date(now + 7 * 24 * 60 * 60 * 1000);
-  }
+function safeString(v: any) {
+  return typeof v === "string" ? v.trim() : "";
 }
 
 function normalizeTagName(name: string) {
   return name.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
-function pickExpiresIn(body: any): ExpiresKey | null {
+function slugifyTag(name: string) {
+  return normalizeTagName(name)
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "") // tira acentos
+    .replace(/[^a-z0-9 ]/g, "") // remove símbolos
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+function computeExpiresAt(key: ExpiresKey) {
+  const now = Date.now();
+  if (key === "5m") return new Date(now + 5 * 60 * 1000);
+  if (key === "1d") return new Date(now + 1 * 24 * 60 * 60 * 1000);
+  if (key === "3d") return new Date(now + 3 * 24 * 60 * 60 * 1000);
+  return new Date(now + 7 * 24 * 60 * 60 * 1000);
+}
+
+function pickExpiresKey(body: any): ExpiresKey | null {
   // novo: expiresIn: "5m" | "1d" | "3d" | "7d"
   if (typeof body?.expiresIn === "string") {
     const v = body.expiresIn.toLowerCase();
@@ -38,40 +45,76 @@ function pickExpiresIn(body: any): ExpiresKey | null {
   if (d === 3) return "3d";
   if (d === 7) return "7d";
 
-  // default (se não vier nada)
+  // default
   return "3d";
 }
 
-function safeString(v: any) {
-  return typeof v === "string" ? v.trim() : "";
+async function ensureTag(tx: Prisma.TransactionClient, rawName: string) {
+  const name = normalizeTagName(rawName);
+  const slug = slugifyTag(name);
+
+  // 1) tenta por name
+  const byName = await tx.tag.findUnique({ where: { name } });
+  if (byName) return byName;
+
+  // 2) tenta por slug (evita colisão de slug único)
+  const bySlug = await tx.tag.findUnique({ where: { slug } });
+  if (bySlug) return bySlug;
+
+  // 3) cria
+  try {
+    return await tx.tag.create({ data: { name, slug } });
+  } catch (e: any) {
+    // se deu race/colisão (P2002), pega o que foi criado por outro request
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      const again =
+        (await tx.tag.findUnique({ where: { name } })) ??
+        (await tx.tag.findUnique({ where: { slug } }));
+      if (again) return again;
+    }
+    throw e;
+  }
 }
 
 export async function GET(req: Request) {
   try {
-    // "delete automático" sem cron: limpou, abriu o feed, sumiu
     const now = new Date();
+
+    // delete automático sem cron (quando alguém abre o feed)
     await prisma.listing.deleteMany({ where: { expiresAt: { lte: now } } });
 
     const { searchParams } = new URL(req.url);
-
     const q = (searchParams.get("q") ?? "").trim();
     const region = (searchParams.get("region") ?? "").trim();
     const tag = (searchParams.get("tag") ?? "").trim();
     const sort = (searchParams.get("sort") ?? "new").trim(); // "new" | "expiring"
 
     const where: any = {
+      status: "ACTIVE",
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     };
 
     if (region) where.region = { contains: region, mode: "insensitive" };
 
     if (tag) {
+      const tagName = normalizeTagName(tag);
+      const tagSlug = slugifyTag(tag);
       where.tags = {
-        some: { tag: { name: { equals: normalizeTagName(tag), mode: "insensitive" } } },
+        some: {
+          tag: {
+            OR: [
+              { name: { equals: tagName, mode: "insensitive" } },
+              { slug: { equals: tagSlug, mode: "insensitive" } },
+            ],
+          },
+        },
       };
     }
 
     if (q) {
+      const qName = normalizeTagName(q);
+      const qSlug = slugifyTag(q);
+
       where.AND = where.AND ?? [];
       where.AND.push({
         OR: [
@@ -80,7 +123,14 @@ export async function GET(req: Request) {
           { region: { contains: q, mode: "insensitive" } },
           {
             tags: {
-              some: { tag: { name: { contains: normalizeTagName(q), mode: "insensitive" } } },
+              some: {
+                tag: {
+                  OR: [
+                    { name: { contains: qName, mode: "insensitive" } },
+                    { slug: { contains: qSlug, mode: "insensitive" } },
+                  ],
+                },
+              },
             },
           },
         ],
@@ -131,7 +181,7 @@ export async function POST(req: Request) {
   if (!offerText) return NextResponse.json({ error: "offerText é obrigatório." }, { status: 400 });
   if (!wantText) return NextResponse.json({ error: "wantText é obrigatório." }, { status: 400 });
 
-  // recomendo MUITO exigir 1 contato pra não virar anúncio fantasma
+  // evita anúncio fantasma
   if (!steamProfileUrl && !discordHandle) {
     return NextResponse.json(
       { error: "Informe pelo menos 1 contato (Steam ou Discord)." },
@@ -139,8 +189,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // aceita 5m/1d/3d/7d (e também o antigo 1/3/7)
-  const expKey = pickExpiresIn(body);
+  const expKey = pickExpiresKey(body);
   if (!expKey) {
     return NextResponse.json(
       { error: "Expiração inválida (use 5m, 1d, 3d ou 7d)." },
@@ -149,9 +198,8 @@ export async function POST(req: Request) {
   }
   const expiresAt = computeExpiresAt(expKey);
 
-  // tags
   const rawTags: string[] = Array.isArray(body.tags) ? body.tags : [];
-  const tagNames = rawTags
+  const tagsInput = rawTags
     .map((t) => normalizeTagName(String(t)))
     .filter(Boolean)
     .slice(0, 20);
@@ -159,17 +207,24 @@ export async function POST(req: Request) {
   try {
     const now = new Date();
 
-    const result = await prisma.$transaction(async (tx) => {
+    const created = await prisma.$transaction(async (tx) => {
       // delete automático sem cron (também no POST)
       await tx.listing.deleteMany({ where: { expiresAt: { lte: now } } });
 
-      // cria um "user" leve (sem conta), só pra contato
-      const user = await tx.user.create({
-        data: {
-          steamProfileUrl,
-          discordHandle,
-        },
+      // reaproveita “usuário” se bater o mesmo contato (reduz lixo no DB)
+      const or: any[] = [];
+      if (steamProfileUrl) or.push({ steamProfileUrl });
+      if (discordHandle) or.push({ discordHandle });
+
+      let user = await tx.user.findFirst({
+        where: or.length ? { OR: or } : undefined,
       });
+
+      if (!user) {
+        user = await tx.user.create({
+          data: { steamProfileUrl, discordHandle },
+        });
+      }
 
       const listing = await tx.listing.create({
         data: {
@@ -180,22 +235,10 @@ export async function POST(req: Request) {
           expiresAt,
           userId: user.id,
         },
-        include: {
-          user: true,
-          tags: { include: { tag: true } },
-        },
       });
 
-      if (tagNames.length) {
-        const tags = await Promise.all(
-          tagNames.map((name) =>
-            tx.tag.upsert({
-              where: { name },
-              create: { name },
-              update: {},
-            })
-          )
-        );
+      if (tagsInput.length) {
+        const tags = await Promise.all(tagsInput.map((n) => ensureTag(tx, n)));
 
         await tx.listingTag.createMany({
           data: tags.map((t) => ({ listingId: listing.id, tagId: t.id })),
@@ -203,19 +246,16 @@ export async function POST(req: Request) {
         });
       }
 
-      // re-fetch pra vir com tags preenchidas
-      const full = await tx.listing.findUnique({
+      return tx.listing.findUnique({
         where: { id: listing.id },
         include: {
           user: true,
           tags: { include: { tag: true } },
         },
       });
-
-      return full;
     });
 
-    return NextResponse.json({ listing: result }, { status: 201 });
+    return NextResponse.json({ listing: created }, { status: 201 });
   } catch (e: any) {
     return NextResponse.json(
       { error: e?.message ?? "Erro ao criar anúncio." },
