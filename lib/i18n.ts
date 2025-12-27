@@ -96,7 +96,6 @@ type ListingsDict = {
   emptyFilters: string;
 
   imageAlt: string;
-  pillPrint: string;
 
   createdAtTz: string;
   dash: string;
