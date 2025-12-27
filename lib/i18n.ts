@@ -85,9 +85,9 @@ type ListingsDict = {
   sortNew: string;
   sortExpiring: string;
 
-  showingPrefix: string; // "Showing up to"
-  showingMid: string; // "of"
-  showingSuffix: string; // "results"
+  showingPrefix: string;
+  showingMid: string;
+  showingSuffix: string;
   apply: string;
 
   popularTags: string;
@@ -98,7 +98,7 @@ type ListingsDict = {
   imageAlt: string;
   pillPrint: string;
 
-  createdAtTz: string; // label for timezone formatting (optional)
+  createdAtTz: string;
   dash: string;
 
   offer: string;
@@ -120,7 +120,6 @@ type ListingsDict = {
 };
 
 type FAQDict = {
-  // Optional, se você quiser usar em generateMetadata
   metaTitle: string;
   metaDescription: string;
 
@@ -134,7 +133,6 @@ type FAQDict = {
   open: string;
   close: string;
 
-  // Sections
   generalTitle: string;
   generalSubtitle: string;
 
@@ -152,7 +150,6 @@ type FAQDict = {
   issuesTitle: string;
   issuesSubtitle: string;
 
-  // General Q/A
   g1q: string;
   g1a: string;
   g2q: string;
@@ -160,7 +157,6 @@ type FAQDict = {
   g3q: string;
   g3a: string;
 
-  // Posting Q/A
   p1q: string;
   p1a: string;
   p2q: string;
@@ -170,13 +166,11 @@ type FAQDict = {
   p4q: string;
   p4a: string;
 
-  // Expiration Q/A
   e1q: string;
   e1a: string;
   e2q: string;
   e2a: string;
 
-  // Safety Q/A
   s1q: string;
   s1a: string;
   s2q: string;
@@ -184,19 +178,16 @@ type FAQDict = {
   s3q: string;
   s3a: string;
 
-  // Privacy Q/A
   pr1q: string;
   pr1a: string;
   pr2q: string;
   pr2a: string;
 
-  // Issues Q/A
   i1q: string;
   i1a: string;
   i2q: string;
   i2a: string;
 
-  // Sidebar
   shortcutsTitle: string;
   shGeneral: string;
   shPosting: string;
@@ -212,7 +203,6 @@ type FAQDict = {
 };
 
 type Dict = {
-  // Home
   badge: string;
   title: string;
   subtitle: string;
@@ -260,7 +250,6 @@ type Dict = {
 
   footer: string;
 
-  // New + Listings + FAQ
   new: NewDict;
   listings: ListingsDict;
   faq: FAQDict;
@@ -269,75 +258,75 @@ type Dict = {
 export const i18n = {
   pt: {
     // Home
-    badge: "3 passos para trocar",
-    title: "Posta seu item. A galera vê. Você troca.",
+    badge: "Três passos para trocar",
+    title: "Publique seu item. Encontre interessados. Feche a troca.",
     subtitle:
-      "ARC Traders é um feed de trocas direto ao ponto: print do item, o que você quer em troca e um contato. Sem conta, sem cadastro chato.",
-    postNow: "Postar agora",
-    openFeed: "Abrir o feed",
+      "ARC Traders é um feed simples de trocas: envie um print do item, descreva o que você oferece e o que procura, e deixe um contato. Sem cadastro obrigatório.",
+    postNow: "Publicar anúncio",
+    openFeed: "Ver anúncios",
 
-    total: "Anúncios no total",
-    totalHint: "tudo que já foi postado",
-    new24h: "Novos nas 24h",
-    new24hHint: "movimento recente",
+    total: "Total de anúncios",
+    totalHint: "tudo o que já foi publicado",
+    new24h: "Novos nas últimas 24h",
+    new24hHint: "atividade recente",
     activeNow: "Ativos agora",
-    activeNowHint: "aparecem no feed",
+    activeNowHint: "visíveis no feed",
 
     rulesTitle: "Regras rápidas",
-    rules1: "Print obrigatório (recorta/zoom pra ficar legível).",
-    rules2: "Seja específico: “Ofereço” e “Quero” bem descritos.",
-    rules3: "Sem taxa, sem reserva paga, sem intermediário. Só troca.",
+    rules1: "Print obrigatório (recorte/zoom para ficar legível).",
+    rules2: "Descreva bem “Ofereço” e “Quero” para facilitar a busca.",
+    rules3: "Negociação direta entre jogadores. Sem intermediários.",
 
-    trendingTitle: "Tags em alta",
-    noTags1: "sem tags ainda",
-    noTags2: "poste e comece a trend",
+    trendingTitle: "Tags em destaque",
+    noTags1: "ainda sem tags",
+    noTags2: "publique o primeiro anúncio",
 
     previewTitle: "Anúncios",
-    previewSubtitle: "últimas trocas publicadas pela comunidade",
+    previewSubtitle: "publicações mais recentes da comunidade",
     previewNewPrefix: "24h: ",
     previewNewSuffix: " novos",
-    emptyPreview: "Ainda não tem anúncios. Poste e seja o primeiro.",
+    emptyPreview: "Ainda não há anúncios. Publique o primeiro.",
     viewAll: "Ver todos os anúncios",
 
     cardOffer: "Ofereço",
     cardWant: "Quero",
-    discordAvailable: "Discord disponível",
+    discordAvailable: "Discord informado",
     noContact: "sem contato",
     imageAlt: "Print do item",
 
     howTitle: "Como funciona",
-    howSubtitle: "Três passos, zero burocracia.",
-    howCta: "Postar troca",
-    step1Title: "Sobe o print",
-    step1Desc: "Print mostra a real. Recorta e dá zoom pra deixar o item nítido.",
-    step2Title: "Escreve a troca",
-    step2Desc: "“Ofereço” e “Quero” bem descritos fazem a galera te achar rapidinho.",
-    step3Title: "Deixa contato",
-    step3Desc: "Steam/Discord ou tag no jogo. A negociação acontece direto com você.",
+    howSubtitle: "Rápido e sem burocracia.",
+    howCta: "Publicar troca",
+    step1Title: "Envie o print",
+    step1Desc: "Use um print nítido. Recorte e dê zoom para destacar o item.",
+    step2Title: "Descreva a troca",
+    step2Desc: "Explique claramente o que você oferece e o que procura.",
+    step3Title: "Informe um contato",
+    step3Desc: "Use Steam/Discord ou outro contato. A negociação acontece diretamente com você.",
 
-    footer: "Fan-made, sem afiliação oficial.",
+    footer: "Projeto feito por fãs. Sem afiliação oficial.",
 
     // New
     new: {
-      badge: "print + oferta + troca + contato",
+      badge: "print + descrição + contato",
       title: "Criar anúncio",
-      subtitle: "Faz um anúncio que dá match: print legível + texto objetivo + contato fácil.",
-      backFeed: "Voltar pro feed",
+      subtitle: "Um bom anúncio é simples: print claro, texto objetivo e um contato fácil.",
+      backFeed: "Voltar ao feed",
 
       detailsTitle: "Detalhes da troca",
       offerLabel: "Ofereço",
-      offerPh: "Ex: Battery pack, mod raro, blueprint…",
+      offerPh: "Ex.: Battery pack, mod raro, blueprint…",
       wantLabel: "Quero",
-      wantPh: "Ex: medkit, mod específico, troca 1:1…",
+      wantPh: "Ex.: medkit, mod específico, troca 1:1…",
 
-      tagsLabel: "Tags (separa por vírgula)",
-      tagsPh: "Ex: blueprint, mod, rare, BR, EU…",
+      tagsLabel: "Tags (separe por vírgula)",
+      tagsPh: "Ex.: blueprint, mod, rare, BR, EU…",
 
       regionLabel: "Região (opcional)",
-      regionPh: "Ex: BR / SA / NA / EU…",
+      regionPh: "Ex.: BR / SA / NA / EU…",
 
       expiresLabel: "Expiração",
-      expiresHint: "Quando expirar, o anúncio some do feed automaticamente.",
+      expiresHint: "Ao expirar, o anúncio sai do feed automaticamente.",
       exp5m: "5 minutos (teste)",
       exp1d: "1 dia",
       exp3d: "3 dias",
@@ -347,26 +336,26 @@ export const i18n = {
       steamLabel: "Steam (link do perfil)",
       steamPh: "https://steamcommunity.com/id/...",
       discordLabel: "Discord (opcional)",
-      discordPh: "ex: User#0000",
+      discordPh: "ex.: User#0000",
 
-      ruleRmt: "Sem dinheiro real (RMT)",
-      ruleClear: "Print claro = mais chance de fechar",
+      ruleRmt: "Sem garantias para transações com dinheiro real",
+      ruleClear: "Print nítido ajuda a receber respostas",
 
       imageTitle: "Imagem do item",
-      imageSubtitle: "Selecione um print e recorte pra ficar bonito no feed.",
-      choose: "Escolher",
-      noImage: "Sem imagem ainda. Escolhe um print pra começar.",
+      imageSubtitle: "Selecione um print e recorte para ficar bem no feed.",
+      choose: "Selecionar",
+      noImage: "Nenhuma imagem selecionada. Escolha um print para começar.",
       cropBtn: "Recortar (H/V)",
       useOriginalBtn: "Usar original",
 
       submit: "Publicar anúncio",
-      submitting: "Postando...",
+      submitting: "Publicando...",
 
-      footer: "Fan-made, sem afiliação oficial.",
+      footer: "Projeto feito por fãs. Sem afiliação oficial.",
 
       cropTitle: "Recortar imagem",
       cropSubtitle:
-        "Horizontal/vertical + zoom + rotação. O recorte sai na resolução original (sem limitar pixels).",
+        "Ajuste orientação, zoom e rotação. O recorte mantém a resolução original (sem limitar pixels).",
       horizontal: "Horizontal",
       vertical: "Vertical",
       rotate90: "Girar 90°",
@@ -375,28 +364,28 @@ export const i18n = {
       useCrop: "Usar recorte",
       cancel: "Cancelar",
 
-      errNeedOfferWant: "Preenche pelo menos ‘Ofereço’ e ‘Quero’.",
+      errNeedOfferWant: "Preencha pelo menos “Ofereço” e “Quero”.",
       errNeedImage: "Selecione uma imagem do item (print).",
       errUploadFail: "Falha no upload",
       errCreateFail: "Falha ao criar anúncio",
       errResponse: "Resposta",
-      errTryAgain: "Deu ruim. Tenta de novo.",
+      errTryAgain: "Algo deu errado. Tente novamente.",
       errCropFail: "Falha ao recortar a imagem.",
 
-      previewAlt: "Preview",
+      previewAlt: "Pré-visualização",
     },
 
     // Listings
     listings: {
-      badge: "⚡ print + “ofereço / quero” + Steam/Discord",
+      badge: "print + oferta + contato",
       title: "Feed de trocas",
-      subtitle: "Filtra, encontra e fecha direto no contato. Simples e sem drama.",
+      subtitle: "Use filtros para encontrar anúncios e negocie diretamente com o anunciante.",
 
       create: "Criar anúncio",
       clear: "Limpar filtros",
 
       searchLabel: "Buscar",
-      searchPh: "Ex: blueprint, mod, bateria, medkit…",
+      searchPh: "Ex.: blueprint, mod, bateria, medkit…",
 
       regionLabel: "Região",
       regionAll: "Todas",
@@ -413,7 +402,7 @@ export const i18n = {
       popularTags: "Tags populares:",
       allTags: "Todas",
 
-      emptyFilters: "Nada apareceu com esses filtros. Limpa tag/região ou tenta outra busca.",
+      emptyFilters: "Nenhum anúncio encontrado com esses filtros. Tente ajustar a busca, região ou tag.",
 
       imageAlt: "Print do item",
       pillPrint: "print",
@@ -425,7 +414,7 @@ export const i18n = {
       want: "Quero",
 
       contactFallback: "contato no anúncio",
-      noSteam: "sem steam",
+      noSteam: "sem Steam",
       steam: "Steam",
 
       expiresExpired: "expirado",
@@ -437,33 +426,33 @@ export const i18n = {
       moments: "instantes",
 
       autoExpireNote:
-        "Os anúncios expiram e somem do feed automaticamente. Quer renovar? Posta de novo com print atualizado.",
+        "Os anúncios expiram e saem do feed automaticamente. Para renovar, publique novamente com um print atualizado.",
     },
 
     // FAQ
     faq: {
       metaTitle: "FAQ | ARC Traders",
       metaDescription:
-        "Dúvidas frequentes sobre anúncios, expiração, segurança e como trocar itens no ARC Traders.",
+        "Dúvidas frequentes sobre anúncios, expiração, segurança e como funcionam as trocas no ARC Traders.",
 
-      badge: "respostas rápidas, sem textão inútil",
-      title: "F.A.Q",
-      subtitle: "Tudo que a galera pergunta antes de postar (e o que evita dor de cabeça depois).",
+      badge: "respostas diretas para dúvidas comuns",
+      title: "Perguntas frequentes",
+      subtitle: "Informações rápidas sobre anúncios, expiração, privacidade e segurança.",
 
-      ctaPost: "Postar agora",
+      ctaPost: "Publicar anúncio",
       ctaFeed: "Ver feed",
 
       open: "abrir",
       close: "fechar",
 
       generalTitle: "Geral",
-      generalSubtitle: "O que é, o que não é, e por que existe.",
+      generalSubtitle: "O que é o site e como ele se propõe a ajudar.",
 
-      postingTitle: "Postando anúncios",
-      postingSubtitle: "Como criar um anúncio que dá match de verdade.",
+      postingTitle: "Publicando anúncios",
+      postingSubtitle: "Dicas para criar um anúncio claro e fácil de responder.",
 
       expirationTitle: "Expiração",
-      expirationSubtitle: "Pra manter o feed vivo e sem anúncio velho encalhado.",
+      expirationSubtitle: "Para manter o feed atualizado e evitar anúncios antigos.",
 
       safetyTitle: "Segurança",
 
@@ -471,139 +460,140 @@ export const i18n = {
       privacySubtitle: "O que fica público e o que você controla.",
 
       issuesTitle: "Problemas comuns",
-      issuesSubtitle: "Quando algo não aparece ou dá ruim.",
+      issuesSubtitle: "Quando algo não aparece ou não fica como você esperava.",
 
       g1q: "O que é o ARC Traders?",
       g1a:
-        "Um feed de anúncios de troca pro ARC Raiders: você posta um print do item, descreve o que quer em troca e deixa um contato (Steam/Discord). A negociação acontece direto com você.",
-      g2q: "Precisa criar conta?",
+        "Um feed de anúncios de troca para ARC Raiders. Você publica um print do item, descreve o que oferece e o que procura, e deixa um contato. A negociação é feita diretamente entre jogadores.",
+      g2q: "Preciso criar conta?",
       g2a:
-        "Por enquanto, não. A ideia é ser rápido: postou, apareceu. No futuro pode rolar conta pra recursos tipo histórico, favoritos e moderação mais forte, mas o MVP é sem burocracia.",
-      g3q: "Vocês são oficiais do ARC Raiders?",
+        "No momento, não. A proposta é manter o processo simples. Futuramente, podemos adicionar contas para recursos como favoritos, histórico e moderação.",
+      g3q: "O ARC Traders é oficial?",
       g3a:
-        "Não. É um projeto fan-made, sem afiliação com Embark/Nexon. O objetivo é organizar trocas, não “representar” o jogo. Projeto open source.",
+        "Não. É um projeto feito por fãs e não possui afiliação com a Embark/Nexon. O objetivo é organizar trocas da comunidade.",
 
-      p1q: "O que eu preciso pra postar?",
+      p1q: "O que preciso para publicar?",
       p1a:
-        "Três coisas: print do item, “Ofereço/Quero” bem escrito e Steam ou Discord. Se faltar isso, vira anúncio fantasma.",
-      p2q: "Como faço pro meu print ficar bonito no feed?",
+        "Três coisas: um print do item, uma descrição clara em “Ofereço/Quero” e um contato (Steam ou Discord).",
+      p2q: "Como deixar o print mais legível?",
       p2a:
-        "Usa o recorte/zoom na página de criação. A regra é simples: item grande, HUD pequeno. Quanto mais nítido, mais rápido alguém te chama.",
-      p3q: "Tags servem pra quê?",
+        "Use o recorte e o zoom na página de criação. Quanto mais claro o item estiver, maior a chance de alguém entrar em contato.",
+      p3q: "Para que servem as tags?",
       p3a:
-        "Pra busca funcionar de verdade. Exemplo: “mod”, “rare”, “battery”, “medkit”, “BR”. O feed fica muito mais encontrável.",
-      p4q: "Posso postar mais de um item no mesmo anúncio?",
+        "Elas ajudam a busca. Use termos que descrevam o item ou a troca, como “mod”, “rare”, “battery”, “medkit”, “BR”.",
+      p4q: "Posso colocar vários itens no mesmo anúncio?",
       p4a:
-        "Pode, mas cuidado: se o print vira bagunça, ninguém entende. Melhor é 1 item por anúncio quando dá, ou no máximo um combo bem explicado.",
+        "Pode, mas recomendamos evitar prints confusos. Quando possível, publique um item por anúncio ou um conjunto bem explicado.",
 
       e1q: "Como funciona a expiração (1, 3, 7 dias)?",
       e1a:
-        "Você escolhe na criação. Quando vence, o anúncio some do feed automaticamente. A ideia é evitar troca “morta” ocupando espaço.",
-      e2q: "Expirou. Perdi tudo?",
+        "Você define a duração ao publicar. Quando expira, o anúncio deixa de aparecer no feed automaticamente.",
+      e2q: "Meu anúncio expirou. O que faço?",
       e2a:
-        "Você só precisa postar de novo (e se quiser, usa o mesmo print). A expiração é feita pra manter o feed atual, não pra te punir.",
+        "Basta publicar novamente. Se quiser, você pode reutilizar o mesmo print (ou atualizar).",
 
-      s1q: "É permitido RMT (dinheiro real, pix, venda)?",
-      s1a: "Sim, porém não nos responsabilizamos por perdas ou golpes.",
-      s2q: "Como evitar golpe?",
+      s1q: "RMT (dinheiro real) é permitido?",
+      s1a:
+        "Pode acontecer entre usuários, mas o site não oferece garantia e não se responsabiliza por perdas, fraudes ou conflitos.",
+      s2q: "Como evitar golpes?",
       s2a:
-        "Clássicos: link estranho, pressa demais, ou papo de “manda item primeiro”. Se tá cheirando golpe, provavelmente é. Sai fora.",
-      s3q: "Dá pra denunciar alguém?",
+        "Evite links suspeitos, pedidos de urgência e propostas que exigem enviar itens primeiro. Se algo parecer estranho, não conclua a troca.",
+      s3q: "Posso denunciar alguém?",
       s3a:
-        "Por enquanto é simples: não feche com a pessoa e, se for golpe, mande o link do anúncio pra gente. Depois a gente coloca um sistema de report.",
+        "Por enquanto, não há um sistema interno de denúncias. Se houver problema, guarde o link do anúncio e nos envie para avaliarmos melhorias.",
 
       pr1q: "O que fica público no anúncio?",
       pr1a:
-        "O print, seu texto e o contato que você escolher mostrar (Steam/Discord). Se não quer expor algo, não coloca. Simples.",
+        "O print, o texto do anúncio e o contato que você inserir (Steam/Discord). Se não quiser expor algo, não inclua.",
       pr2q: "Vocês guardam meus dados?",
       pr2a:
-        "A gente só guarda o que você envia no anúncio. Sem login no MVP, então não tem perfil completo nem senha armazenada.",
+        "Armazenamos apenas os dados do anúncio enviado. Sem login no MVP, não há senhas ou perfil completo.",
 
-      i1q: "Postei e não apareceu no feed. Por quê?",
+      i1q: "Publiquei e não apareceu no feed. Por quê?",
       i1a:
-        "Normalmente é: anúncio expirado (data errada), erro no upload, ou filtro ativo (tag/região/busca). Testa abrindo o feed com “Limpar filtros”.",
+        "Verifique se o anúncio não expirou, se o upload foi concluído e se não há filtros ativos (tag/região/busca). Tente “Limpar filtros”.",
       i2q: "Meu print ficou esticado ou cortado estranho.",
       i2a:
-        "O feed usa proporção 16:10. Na criação, recorta e ajusta o zoom pra ficar certinho. Aí o card fica perfeito.",
+        "O feed usa a proporção 16:10. Ajuste o recorte e o zoom na página de criação para encaixar melhor.",
 
       shortcutsTitle: "Atalhos",
       shGeneral: "Geral",
-      shPosting: "Postar",
+      shPosting: "Publicar",
       shExpiration: "Expiração",
       shSafety: "Segurança",
       shPrivacy: "Privacidade",
       shIssues: "Problemas",
 
-      tipTitle: "Dica de ouro",
+      tipTitle: "Dica",
       tipBody:
-        "Anúncio bom é anúncio que dá match: print legível + descrição objetiva + contato fácil. Se tá confuso, ninguém chama.",
+        "Anúncios claros recebem mais respostas: print legível, descrição objetiva e um contato fácil de usar.",
 
-      footer: "Fan-made, sem afiliação oficial.",
+      footer: "Projeto feito por fãs. Sem afiliação oficial.",
     },
   },
 
   en: {
     // Home
-    badge: "3 steps to trade",
-    title: "Post your item. People see it. You trade.",
+    badge: "Three steps to trade",
+    title: "Post your item. Get responses. Complete the trade.",
     subtitle:
-      "ARC Traders is a no-nonsense trade feed: upload a screenshot, write what you want in return, and leave a contact. No account. No annoying signup.",
-    postNow: "Post now",
-    openFeed: "Open the feed",
+      "ARC Traders is a simple trade feed: upload an item screenshot, describe what you offer and what you want, and leave a contact. No required signup.",
+    postNow: "Post a listing",
+    openFeed: "View listings",
 
     total: "Total listings",
     totalHint: "everything ever posted",
     new24h: "New in the last 24h",
     new24hHint: "recent activity",
-    activeNow: "Active right now",
+    activeNow: "Active now",
     activeNowHint: "visible in the feed",
 
     rulesTitle: "Quick rules",
-    rules1: "Screenshot required (crop/zoom so the item is readable).",
-    rules2: "Be specific: clear “Offering” and “Looking for” text.",
-    rules3: "No fees, no paid reservations, no middleman. Trade-only.",
+    rules1: "A screenshot is required (crop/zoom so the item is readable).",
+    rules2: "Write clear “Offering” and “Looking for” text to help people find you.",
+    rules3: "Player-to-player negotiation. No middlemen.",
 
-    trendingTitle: "Trending tags",
+    trendingTitle: "Featured tags",
     noTags1: "no tags yet",
-    noTags2: "post and start the trend",
+    noTags2: "post the first listing",
 
     previewTitle: "Listings",
-    previewSubtitle: "latest trades posted by the community",
+    previewSubtitle: "latest posts from the community",
     previewNewPrefix: "24h: ",
     previewNewSuffix: " new",
-    emptyPreview: "No listings yet. Post one and be the first.",
+    emptyPreview: "No listings yet. Post the first one.",
     viewAll: "View all listings",
 
     cardOffer: "Offering",
     cardWant: "Looking for",
-    discordAvailable: "Discord available",
+    discordAvailable: "Discord provided",
     noContact: "no contact",
     imageAlt: "Item screenshot",
 
     howTitle: "How it works",
-    howSubtitle: "Three steps, zero bureaucracy.",
+    howSubtitle: "Fast and straightforward.",
     howCta: "Post a trade",
-    step1Title: "Upload the screenshot",
-    step1Desc: "Screenshots keep it real. Crop and zoom so the item is clearly visible.",
-    step2Title: "Write the trade",
-    step2Desc: "Clear “Offering” and “Looking for” descriptions help people find you fast.",
-    step3Title: "Leave a contact",
-    step3Desc: "Steam/Discord or your in-game tag. Negotiation happens directly with you.",
+    step1Title: "Upload a screenshot",
+    step1Desc: "Use a clear screenshot. Crop and zoom to highlight the item.",
+    step2Title: "Describe the trade",
+    step2Desc: "Explain what you offer and what you want as clearly as possible.",
+    step3Title: "Add a contact",
+    step3Desc: "Use Steam/Discord or another contact. The conversation happens directly with you.",
 
-    footer: "Fan-made. Not officially affiliated.",
+    footer: "Fan-made project. Not officially affiliated.",
 
     // New
     new: {
-      badge: "screenshot + offer + want + contact",
+      badge: "screenshot + details + contact",
       title: "Create listing",
-      subtitle: "Make it easy to match: readable screenshot + clear text + easy contact.",
+      subtitle: "A good listing is simple: clear screenshot, clear text, easy contact.",
       backFeed: "Back to feed",
 
       detailsTitle: "Trade details",
       offerLabel: "Offering",
       offerPh: "e.g. Battery pack, rare mod, blueprint…",
       wantLabel: "Looking for",
-      wantPh: "e.g. medkit, specific mod, 1:1…",
+      wantPh: "e.g. medkit, specific mod, 1:1 trade…",
 
       tagsLabel: "Tags (comma-separated)",
       tagsPh: "e.g. blueprint, mod, rare, BR, EU…",
@@ -612,7 +602,7 @@ export const i18n = {
       regionPh: "e.g. BR / SA / NA / EU…",
 
       expiresLabel: "Expiration",
-      expiresHint: "When it expires, the listing automatically disappears from the feed.",
+      expiresHint: "After it expires, the listing is automatically removed from the feed.",
       exp5m: "5 minutes (test)",
       exp1d: "1 day",
       exp3d: "3 days",
@@ -622,26 +612,26 @@ export const i18n = {
       steamLabel: "Steam (profile link)",
       steamPh: "https://steamcommunity.com/id/...",
       discordLabel: "Discord (optional)",
-      discordPh: "e.g. yas#0001",
+      discordPh: "e.g. User#0000",
 
-      ruleRmt: "No real-money trading (RMT)",
+      ruleRmt: "No guarantees for real-money deals",
       ruleClear: "Clear screenshots get more replies",
 
       imageTitle: "Item image",
-      imageSubtitle: "Pick a screenshot and crop it to look great in the feed.",
-      choose: "Choose",
-      noImage: "No image yet. Pick a screenshot to start.",
+      imageSubtitle: "Select a screenshot and crop it to fit nicely in the feed.",
+      choose: "Select",
+      noImage: "No image selected. Choose a screenshot to start.",
       cropBtn: "Crop (H/V)",
       useOriginalBtn: "Use original",
 
       submit: "Publish listing",
       submitting: "Publishing...",
 
-      footer: "Fan-made. Not officially affiliated.",
+      footer: "Fan-made project. Not officially affiliated.",
 
       cropTitle: "Crop image",
       cropSubtitle:
-        "Horizontal/vertical + zoom + rotation. The output keeps the original resolution (no pixel limit).",
+        "Adjust orientation, zoom, and rotation. Output keeps the original resolution (no pixel limit).",
       horizontal: "Horizontal",
       vertical: "Vertical",
       rotate90: "Rotate 90°",
@@ -650,12 +640,12 @@ export const i18n = {
       useCrop: "Use crop",
       cancel: "Cancel",
 
-      errNeedOfferWant: "Fill at least ‘Offering’ and ‘Looking for’.",
+      errNeedOfferWant: "Fill in at least “Offering” and “Looking for”.",
       errNeedImage: "Select an item image (screenshot).",
       errUploadFail: "Upload failed",
       errCreateFail: "Failed to create listing",
       errResponse: "Response",
-      errTryAgain: "Something went wrong. Try again.",
+      errTryAgain: "Something went wrong. Please try again.",
       errCropFail: "Failed to crop the image.",
 
       previewAlt: "Preview",
@@ -663,9 +653,9 @@ export const i18n = {
 
     // Listings
     listings: {
-      badge: "⚡ screenshot + “offering / looking for” + Steam/Discord",
+      badge: "screenshot + details + contact",
       title: "Trade feed",
-      subtitle: "Filter, find, and deal directly through the contact. Clean and simple.",
+      subtitle: "Use filters to find listings and contact the poster directly.",
 
       create: "Create listing",
       clear: "Clear filters",
@@ -688,7 +678,7 @@ export const i18n = {
       popularTags: "Popular tags:",
       allTags: "All",
 
-      emptyFilters: "Nothing matched those filters. Clear tag/region or try a different search.",
+      emptyFilters: "No listings matched those filters. Try adjusting your search, region, or tag.",
 
       imageAlt: "Item screenshot",
       pillPrint: "screenshot",
@@ -700,7 +690,7 @@ export const i18n = {
       want: "Looking for",
 
       contactFallback: "contact in listing",
-      noSteam: "no steam",
+      noSteam: "no Steam",
       steam: "Steam",
 
       expiresExpired: "expired",
@@ -712,94 +702,95 @@ export const i18n = {
       moments: "moments",
 
       autoExpireNote:
-        "Listings expire and automatically disappear from the feed. Want to renew? Post again with an updated screenshot.",
+        "Listings expire and are removed from the feed automatically. To renew, post again with an updated screenshot.",
     },
 
     // FAQ
     faq: {
       metaTitle: "FAQ | ARC Traders",
       metaDescription:
-        "Frequently asked questions about listings, expiration, safety, and how trading works on ARC Traders.",
+        "Frequently asked questions about listings, expiration, safety, privacy, and how trading works on ARC Traders.",
 
-      badge: "quick answers, no pointless wall of text",
-      title: "F.A.Q",
-      subtitle: "Everything people ask before posting (and what saves you headaches later).",
+      badge: "clear answers to common questions",
+      title: "Frequently asked questions",
+      subtitle: "Quick information about posting, expiration, privacy, and safety.",
 
-      ctaPost: "Post now",
+      ctaPost: "Post a listing",
       ctaFeed: "View feed",
 
       open: "open",
       close: "close",
 
       generalTitle: "General",
-      generalSubtitle: "What it is, what it isn’t, and why it exists.",
+      generalSubtitle: "What the site is and what it aims to do.",
 
       postingTitle: "Posting listings",
-      postingSubtitle: "How to make a listing that actually gets replies.",
+      postingSubtitle: "Tips to make your listing clear and easy to reply to.",
 
       expirationTitle: "Expiration",
-      expirationSubtitle: "To keep the feed alive and avoid stale listings.",
+      expirationSubtitle: "To keep the feed current and avoid stale listings.",
 
       safetyTitle: "Safety",
 
       privacyTitle: "Privacy",
       privacySubtitle: "What’s public and what you control.",
 
-      issuesTitle: "Common problems",
-      issuesSubtitle: "When something doesn’t show up or looks wrong.",
+      issuesTitle: "Common issues",
+      issuesSubtitle: "When something doesn’t show up or doesn’t look right.",
 
       g1q: "What is ARC Traders?",
       g1a:
-        "A trade listing feed for ARC Raiders: you post a screenshot, write what you want in return, and leave a contact (Steam/Discord). The deal happens directly with you.",
+        "A trade listing feed for ARC Raiders. You upload a screenshot, describe what you offer and what you want, and leave a contact. Negotiation happens directly between players.",
       g2q: "Do I need an account?",
       g2a:
-        "Not for now. The goal is speed: post it and it shows up. Later we might add accounts for history, favorites, and stronger moderation, but the MVP is zero bureaucracy.",
-      g3q: "Are you officially part of ARC Raiders?",
+        "Not at the moment. The goal is to keep things simple. In the future, we may add accounts for features like favorites, history, and moderation.",
+      g3q: "Is ARC Traders official?",
       g3a:
-        "No. This is a fan-made project with no affiliation to Embark/Nexon. The goal is to organize trades, not “represent” the game. Open source project.",
+        "No. It’s a fan-made project and is not affiliated with Embark/Nexon. The goal is to help the community organize trades.",
 
       p1q: "What do I need to post?",
       p1a:
-        "Three things: an item screenshot, clear “Offering/Looking for” text, and Steam or Discord. If you miss those, your listing turns into a ghost.",
-      p2q: "How do I make my screenshot look good in the feed?",
+        "Three things: an item screenshot, clear “Offering/Looking for” text, and a contact (Steam or Discord).",
+      p2q: "How can I make my screenshot more readable?",
       p2a:
-        "Use crop/zoom on the creation page. Simple rule: big item, small HUD. The clearer it is, the faster people DM you.",
+        "Use crop and zoom on the creation page. The clearer the item is, the more likely someone will contact you.",
       p3q: "What are tags for?",
       p3a:
-        "They make search actually work. Example: “mod”, “rare”, “battery”, “medkit”, “BR”. Your listing becomes much easier to find.",
-      p4q: "Can I post multiple items in one listing?",
+        "They improve search. Use terms that describe the item or trade, such as “mod”, “rare”, “battery”, “medkit”, “BR”.",
+      p4q: "Can I include multiple items in one listing?",
       p4a:
-        "You can, but be smart: if the screenshot becomes messy, nobody understands it. Best is 1 item per listing, or at most a well-explained bundle.",
+        "You can, but avoid cluttered screenshots. When possible, post one item per listing or a well-explained bundle.",
 
       e1q: "How does expiration work (1, 3, 7 days)?",
       e1a:
-        "You choose it when posting. When it ends, the listing disappears automatically. The idea is to avoid dead trades taking space.",
-      e2q: "It expired. Did I lose everything?",
+        "You set the duration when posting. After it expires, the listing is automatically removed from the feed.",
+      e2q: "My listing expired. What now?",
       e2a:
-        "Just post again (and you can reuse the same screenshot). Expiration exists to keep the feed fresh, not to punish you.",
+        "Just post again. You can reuse the same screenshot or upload an updated one.",
 
-      s1q: "Is RMT allowed (real money, cash apps, selling)?",
-      s1a: "Yes, but we’re not responsible for losses or scams.",
+      s1q: "Is real-money trading allowed?",
+      s1a:
+        "Users may choose to do it, but the site provides no guarantees and is not responsible for losses, fraud, or disputes.",
       s2q: "How do I avoid scams?",
       s2a:
-        "Classic signs: weird links, too much urgency, or “send the item first”. If it smells like a scam, it usually is. Walk away.",
+        "Avoid suspicious links, high-pressure requests, and deals that require sending items first. If it feels off, don’t proceed.",
       s3q: "Can I report someone?",
       s3a:
-        "For now it’s simple: don’t trade with them and, if it’s a scam, send us the listing link. We’ll add a proper report system later.",
+        "There is no built-in reporting system yet. If there’s an issue, keep the listing link and send it to us so we can improve moderation tools.",
 
-      pr1q: "What becomes public in a listing?",
+      pr1q: "What is public in a listing?",
       pr1a:
-        "The screenshot, your text, and whatever contact you choose (Steam/Discord). If you don’t want to expose something, don’t include it.",
+        "The screenshot, the listing text, and the contact details you provide (Steam/Discord). If you don’t want to share something, don’t include it.",
       pr2q: "Do you store my data?",
       pr2a:
-        "We only store what you submit in the listing. No login in the MVP, so there’s no full profile and no passwords stored.",
+        "We store only what you submit in the listing. With no login in the MVP, there are no passwords or full profiles.",
 
       i1q: "I posted but it didn’t show in the feed. Why?",
       i1a:
-        "Usually: the listing already expired (wrong date), upload error, or an active filter (tag/region/search). Try opening the feed and clicking “Clear filters”.",
-      i2q: "My screenshot looks stretched or cropped weird.",
+        "Check if the listing expired, if the upload completed, and whether filters are active (tag/region/search). Try clicking “Clear filters”.",
+      i2q: "My screenshot looks stretched or oddly cropped.",
       i2a:
-        "The feed uses a 16:10 ratio. On the creation page, crop and adjust zoom so it fits. Then the card looks perfect.",
+        "The feed uses a 16:10 ratio. Adjust crop and zoom on the creation page for a better fit.",
 
       shortcutsTitle: "Shortcuts",
       shGeneral: "General",
@@ -809,11 +800,11 @@ export const i18n = {
       shPrivacy: "Privacy",
       shIssues: "Issues",
 
-      tipTitle: "Golden tip",
+      tipTitle: "Tip",
       tipBody:
-        "A good listing gets replies: readable screenshot + clear description + easy contact. If it’s confusing, nobody messages you.",
+        "Clear listings get more replies: readable screenshot, straightforward description, and an easy contact method.",
 
-      footer: "Fan-made. Not officially affiliated.",
+      footer: "Fan-made project. Not officially affiliated.",
     },
   },
 } satisfies Record<Lang, Dict>;
