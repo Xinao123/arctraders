@@ -88,16 +88,32 @@ function ListingCard({
 }) {
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10">
-      {/* ✅ IMAGEM: qualquer resolução, sem cortar (prioriza qualidade) */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/20">
+      {/* ✅ IMAGEM: qualquer resolução + sem borda preta (blur no fundo + contain na frente) */}
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
         <div className="relative h-[220px] w-full">
+          {/* Fundo blur */}
+          <Image
+            src={listing.imageUrl}
+            alt=""
+            aria-hidden
+            fill
+            className="object-cover scale-110 blur-2xl opacity-40"
+            sizes="(max-width: 768px) 100vw, 33vw"
+            quality={95}
+          />
+
+          {/* Imagem real (inteira) */}
           <Image
             src={listing.imageUrl}
             alt={t.imageAlt}
             fill
             className="object-contain"
             sizes="(max-width: 768px) 100vw, 33vw"
+            quality={95}
           />
+
+          {/* “vidro” leve pra integrar */}
+          <div className="absolute inset-0 ring-1 ring-inset ring-white/5" />
         </div>
       </div>
 
