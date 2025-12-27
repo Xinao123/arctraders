@@ -5,9 +5,8 @@ import { getLang } from "@/lib/getLang";
 import { i18n } from "@/lib/i18n";
 
 
-export const revalidate = 30;
-const lang = getLang();
-const t = i18n[lang];
+export const revalidate = 30; 
+
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
