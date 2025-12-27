@@ -1,19 +1,14 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
+import { getLang } from "@/lib/getLang";
 
-export const metadata: Metadata = {
-  title: "ARC Traders",
-  description: "Trocas de ARC Raiders com feed limpo e contato direto.",
-};
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getLang();
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang={lang === "pt" ? "pt-BR" : "en"}>
       <body className="bg-[#07080c] text-white">
         <SiteHeader />
-
-        {/* altura do header ~64px, então pt-20 dá folga */}
         <div className="pt-20">{children}</div>
       </body>
     </html>
