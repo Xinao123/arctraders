@@ -180,7 +180,7 @@ export default async function HomePage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-lg">
-              
+              ⚡
             </span>
             <span className="font-semibold tracking-tight">ARC Traders</span>
           </Link>
@@ -212,7 +212,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-14 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <Badge>⚡ print + “ofereço / quero” + Steam/Discord · pronto</Badge>
+            <Badge>print + “ofereço / quero” + Steam/Discord · pronto</Badge>
 
             <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
               Posta seu item. A galera vê. Você troca.
