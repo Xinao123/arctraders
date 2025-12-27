@@ -101,6 +101,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
   let totalMatched = 0;
 
   try {
+    // limpa expirados quando abre o feed
     await prisma.listing.deleteMany({
       where: { expiresAt: { lte: now } },
     });
@@ -275,6 +276,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
             </div>
           </div>
 
+          {/* mantém tag quando clicar em aplicar */}
           <input type="hidden" name="tag" value={tag} />
 
           <div className="mt-4 flex items-center justify-between gap-3">
@@ -291,6 +293,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
             </button>
           </div>
 
+          {/* Popular tags */}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="text-xs text-white/50">{t.popularTags}</span>
 
@@ -342,27 +345,43 @@ export default async function ListingsPage({ searchParams }: PageProps) {
                 key={l.id}
                 className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10"
               >
-                {/* ✅ IMAGEM: qualquer resolução/proporção, sem cortar (prioriza qualidade) */}
-                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/20">
-                  {/* altura fixa evita “card pulando” e aceita vertical/horizontal */}
+                {/* ✅ IMAGEM: aceita qualquer resolução, sem cortar, sem borda preta */}
+                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                   <div className="relative h-[260px] w-full">
+                    {/* Fundo (preenche com blur) */}
+                    <Image
+                      src={l.imageUrl}
+                      alt=""
+                      aria-hidden
+                      fill
+                      className="object-cover scale-110 blur-2xl opacity-40"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      quality={95}
+                    />
+
+                    {/* Imagem real (inteira) */}
                     <Image
                       src={l.imageUrl}
                       alt={t.imageAlt}
                       fill
                       className="object-contain"
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      // ✅ deixa o Next escolher o melhor, mas sem forçar corte
-                      // (se quiser ultra qualidade, posso te passar config de remotePatterns + disable optimization por domínio)
+                      quality={95}
                     />
-                  </div>
 
-                  <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-                    {expiresText ? (
+                    {/* leve “vidro” pra integrar */}
+                    <div className="absolute inset-0 ring-1 ring-inset ring-white/5" />
+
+                    <div className="absolute left-3 top-3 flex flex-wrap gap-2">
                       <span className="rounded-full border border-white/10 bg-black/45 px-2 py-1 text-[11px] text-white/80 backdrop-blur">
-                        {expiresText}
+                        {t.pillPrint}
                       </span>
-                    ) : null}
+                      {expiresText ? (
+                        <span className="rounded-full border border-white/10 bg-black/45 px-2 py-1 text-[11px] text-white/80 backdrop-blur">
+                          {expiresText}
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
 
