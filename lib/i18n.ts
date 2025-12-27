@@ -405,7 +405,7 @@ export const i18n = {
       emptyFilters: "Não encontramos resultados. Tente mudar a região, as palavras ou a busca.",
 
       imageAlt: "Imagem do item",
-      pillPrint: "",
+     
 
       createdAtTz: "",
       dash: "—",
