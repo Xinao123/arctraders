@@ -84,9 +84,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
   const lang = await getLang();
   const t = i18n[lang].listings;
 
-  // ✅ suporta Next que passa searchParams como Promise
   const sp: SearchParams = (await Promise.resolve(searchParams)) ?? {};
-
   const now = new Date();
 
   const q = firstParam(sp, "q", "").trim();
@@ -103,7 +101,6 @@ export default async function ListingsPage({ searchParams }: PageProps) {
   let totalMatched = 0;
 
   try {
-    // 🔥 "auto delete" sem cron: limpa expirados quando alguém abre o feed
     await prisma.listing.deleteMany({
       where: { expiresAt: { lte: now } },
     });
@@ -218,7 +215,10 @@ export default async function ListingsPage({ searchParams }: PageProps) {
           </div>
 
           <div className="flex gap-2">
-            <Link href="/new" className="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90">
+            <Link
+              href="/new"
+              className="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+            >
               {t.create}
             </Link>
             <Link
@@ -231,7 +231,10 @@ export default async function ListingsPage({ searchParams }: PageProps) {
         </div>
 
         {/* Filters */}
-        <form method="GET" className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+        <form
+          method="GET"
+          className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur"
+        >
           <div className="grid gap-3 md:grid-cols-4">
             <div className="md:col-span-2">
               <label className="text-xs font-semibold text-white/70">{t.searchLabel}</label>
@@ -272,7 +275,6 @@ export default async function ListingsPage({ searchParams }: PageProps) {
             </div>
           </div>
 
-          {/* mantém tag quando clicar em aplicar */}
           <input type="hidden" name="tag" value={tag} />
 
           <div className="mt-4 flex items-center justify-between gap-3">
@@ -281,19 +283,23 @@ export default async function ListingsPage({ searchParams }: PageProps) {
               <span className="text-white/80">{totalMatched}</span> {t.showingSuffix}
             </div>
 
-            <button type="submit" className="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90">
+            <button
+              type="submit"
+              className="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+            >
               {t.apply}
             </button>
           </div>
 
-          {/* Popular tags */}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="text-xs text-white/50">{t.popularTags}</span>
 
             <Link
               href={buildHref(base, { tag: "" })}
               className={`rounded-full border px-3 py-1 text-xs ${
-                !tag ? "border-white/25 bg-white/10 text-white" : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
+                !tag
+                  ? "border-white/25 bg-white/10 text-white"
+                  : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
               }`}
             >
               {t.allTags}
@@ -336,15 +342,20 @@ export default async function ListingsPage({ searchParams }: PageProps) {
                 key={l.id}
                 className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10"
               >
+                {/* ✅ IMAGEM: qualquer resolução/proporção, sem cortar (prioriza qualidade) */}
                 <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/20">
-                  <div className="aspect-[16/10]" />
-                  <Image
-                    src={l.imageUrl}
-                    alt={t.imageAlt}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
+                  {/* altura fixa evita “card pulando” e aceita vertical/horizontal */}
+                  <div className="relative h-[260px] w-full">
+                    <Image
+                      src={l.imageUrl}
+                      alt={t.imageAlt}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      // ✅ deixa o Next escolher o melhor, mas sem forçar corte
+                      // (se quiser ultra qualidade, posso te passar config de remotePatterns + disable optimization por domínio)
+                    />
+                  </div>
 
                   <div className="absolute left-3 top-3 flex flex-wrap gap-2">
                     <span className="rounded-full border border-white/10 bg-black/45 px-2 py-1 text-[11px] text-white/80 backdrop-blur">
