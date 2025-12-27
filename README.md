@@ -38,5 +38,3 @@ It is not official and has no affiliation with Embark Studios, Nexon, or any com
 - You are responsible for the information you share in your listing.
 - Trades happen outside the website, so please use common sense and stay safe.
 
-### License
-See the **LICENSE** file in this repository for details.
