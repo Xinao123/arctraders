@@ -1,10 +1,25 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getLang } from "@/lib/getLang";
+import { i18n } from "@/lib/i18n";
 
-export const metadata = {
-  title: "FAQ | ARC Traders",
-  description:
-    "Dúvidas frequentes sobre anúncios, expiração, segurança e como trocar itens no ARC Traders.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+
+  if (lang === "pt") {
+    return {
+      title: "FAQ | ARC Traders",
+      description:
+        "Dúvidas frequentes sobre anúncios, expiração, segurança e como trocar itens no ARC Traders.",
+    };
+  }
+
+  return {
+    title: "FAQ | ARC Traders",
+    description:
+      "Frequently asked questions about listings, expiration, safety, and how trading works on ARC Traders.",
+  };
+}
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
@@ -18,10 +33,14 @@ function FAQItem({
   q,
   children,
   defaultOpen,
+  openLabel,
+  closeLabel,
 }: {
   q: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  openLabel: string;
+  closeLabel: string;
 }) {
   return (
     <details
@@ -31,8 +50,8 @@ function FAQItem({
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-white">
         <span>{q}</span>
         <span className="shrink-0 rounded-xl border border-white/10 bg-black/20 px-3 py-1 text-xs text-white/70 group-open:bg-white/10">
-          <span className="group-open:hidden">abrir</span>
-          <span className="hidden group-open:inline">fechar</span>
+          <span className="group-open:hidden">{openLabel}</span>
+          <span className="hidden group-open:inline">{closeLabel}</span>
         </span>
       </summary>
 
@@ -56,7 +75,10 @@ function SectionTitle({
   );
 }
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const lang = await getLang();
+  const t = i18n[lang].faq;
+
   return (
     <main className="min-h-screen bg-[#07080c] text-white">
       {/* Background */}
@@ -67,16 +89,13 @@ export default function FAQPage() {
         <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
       </div>
 
-
       <div className="mx-auto max-w-6xl px-4 py-10">
-        <Badge>🧩 respostas rápidas, sem textão inútil</Badge>
+        <Badge>{t.badge}</Badge>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight">F.A.Q</h1>
-            <p className="mt-2 text-sm text-white/70">
-              Tudo que a galera pergunta antes de postar (e o que evita dor de cabeça depois).
-            </p>
+            <h1 className="text-3xl font-semibold tracking-tight">{t.title}</h1>
+            <p className="mt-2 text-sm text-white/70">{t.subtitle}</p>
           </div>
 
           <div className="flex gap-2">
@@ -84,126 +103,112 @@ export default function FAQPage() {
               href="/new"
               className="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
             >
-              Postar agora
+              {t.ctaPost}
             </Link>
             <Link
               href="/listings"
               className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
             >
-              Ver feed
+              {t.ctaFeed}
             </Link>
           </div>
         </div>
 
-        {/* Conteúdo */}
+        {/* Content */}
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
           {/* FAQ */}
           <div className="space-y-8">
             <section id="geral" className="space-y-4">
-              <SectionTitle title="Geral" subtitle="O que é, o que não é, e por que existe." />
+              <SectionTitle title={t.generalTitle} subtitle={t.generalSubtitle} />
               <div className="space-y-3">
-                <FAQItem q="O que é o ARC Traders? 🤝" defaultOpen>
-                  Um feed de anúncios de troca pro ARC Raiders: você posta um print do item, descreve o que quer em
-                  troca e deixa um contato (Steam/Discord). A negociação acontece direto com você.
+                <FAQItem q={t.g1q} defaultOpen openLabel={t.open} closeLabel={t.close}>
+                  {t.g1a}
                 </FAQItem>
 
-                <FAQItem q="Precisa criar conta?">
-                  Por enquanto, não. A ideia é ser rápido: postou, apareceu. No futuro pode rolar conta pra recursos
-                  tipo histórico, favoritos e moderação mais forte, mas o MVP é sem burocracia.
+                <FAQItem q={t.g2q} openLabel={t.open} closeLabel={t.close}>
+                  {t.g2a}
                 </FAQItem>
 
-                <FAQItem q="Vocês são oficiais do ARC Raiders?">
-                  Não. É um projeto fan-made, sem afiliação com Embark/Nexon. O objetivo é organizar trocas, não
-                  “representar” o jogo. Projeto Open Source
+                <FAQItem q={t.g3q} openLabel={t.open} closeLabel={t.close}>
+                  {t.g3a}
                 </FAQItem>
               </div>
             </section>
 
             <section id="postar" className="space-y-4">
-              <SectionTitle title="Postando anúncios" subtitle="Como criar um anúncio que dá match de verdade." />
+              <SectionTitle title={t.postTitle} subtitle={t.postSubtitle} />
               <div className="space-y-3">
-                <FAQItem q="O que eu preciso pra postar?">
-                  Três coisas: <b>print do item</b>, <b>Ofereço/Quero</b> bem escrito e <b>Steam ou Discord</b>.
-                  Se faltar isso, vira anúncio fantasma.
+                <FAQItem q={t.p1q} openLabel={t.open} closeLabel={t.close}>
+                  {t.p1a1} <b>{t.p1b1}</b>, <b>{t.p1b2}</b> {lang === "pt" ? "bem escrito" : "clearly written"}{" "}
+                  {lang === "pt" ? "e" : "and"} <b>{t.p1b3}</b>. {t.p1a2}
                 </FAQItem>
 
-                <FAQItem q="Como faço pro meu print ficar bonito no feed?">
-                  Usa o recorte/zoom na página de criação. A regra é simples: item grande, HUD pequeno. Quanto mais
-                  nítido, mais rápido alguém te chama.
+                <FAQItem q={t.p2q} openLabel={t.open} closeLabel={t.close}>
+                  {t.p2a}
                 </FAQItem>
 
-                <FAQItem q="Tags servem pra quê?">
-                  Pra busca funcionar de verdade. Exemplo: “mod”, “rare”, “battery”, “medkit”, “BR”. O feed fica muito
-                  mais “encontrável”.
+                <FAQItem q={t.p3q} openLabel={t.open} closeLabel={t.close}>
+                  {t.p3a}
                 </FAQItem>
 
-                <FAQItem q="Posso postar mais de um item no mesmo anúncio?">
-                  Pode, mas fica esperto: se o print vira bagunça, ninguém entende. Melhor é 1 item por anúncio quando
-                  dá, ou no máximo um combo bem explicado.
+                <FAQItem q={t.p4q} openLabel={t.open} closeLabel={t.close}>
+                  {t.p4a}
                 </FAQItem>
               </div>
             </section>
 
             <section id="expiracao" className="space-y-4">
-              <SectionTitle title="Expiração" subtitle="Pra manter o feed vivo e sem anúncio velho encalhado." />
+              <SectionTitle title={t.expTitle} subtitle={t.expSubtitle} />
               <div className="space-y-3">
-                <FAQItem q="Como funciona a expiração (1, 3, 7 dias)?">
-                  Você escolhe na criação. Quando vence, o anúncio some do feed automaticamente. A ideia é evitar troca
-                  “morta” ocupando espaço.
+                <FAQItem q={t.e1q} openLabel={t.open} closeLabel={t.close}>
+                  {t.e1a}
                 </FAQItem>
 
-                <FAQItem q="Expirou. Perdi tudo?">
-                  Você só precisa postar de novo (e se quiser, usa o mesmo print). A expiração é feita pra manter o
-                  feed atual, não pra te punir.
+                <FAQItem q={t.e2q} openLabel={t.open} closeLabel={t.close}>
+                  {t.e2a}
                 </FAQItem>
               </div>
             </section>
 
             <section id="seguranca" className="space-y-4">
-              <SectionTitle title="Segurança"/>
+              <SectionTitle title={t.safetyTitle} />
               <div className="space-y-3">
-                <FAQItem q="É permitido RMT (dinheiro real, pix, venda)?">
-                 Sim, porem não nos responsabilizamos por perdas ou golpes.
+                <FAQItem q={t.s1q} openLabel={t.open} closeLabel={t.close}>
+                  {t.s1a}
                 </FAQItem>
 
-                <FAQItem q="Como evitar golpe?">
-                  Coisas clássicas: link estranho, pressa demais, ou papo de “manda item
-                  primeiro”. Se tá cheirando golpe, provavelmente é. Sai fora.
+                <FAQItem q={t.s2q} openLabel={t.open} closeLabel={t.close}>
+                  {t.s2a}
                 </FAQItem>
 
-                <FAQItem q="Dá pra denunciar alguém?">
-                  é simples. Por enquanto, o caminho é: não fechar com a pessoa e, se for golpe, mandar o
-                  link do anúncio pra gente implementar um sistema de report depois.
+                <FAQItem q={t.s3q} openLabel={t.open} closeLabel={t.close}>
+                  {t.s3a}
                 </FAQItem>
               </div>
             </section>
 
             <section id="privacidade" className="space-y-4">
-              <SectionTitle title="Privacidade" subtitle="O que fica público e o que você controla." />
+              <SectionTitle title={t.privacyTitle} subtitle={t.privacySubtitle} />
               <div className="space-y-3">
-                <FAQItem q="O que fica público no anúncio?">
-                  O print, seu texto e o contato que você escolher mostrar (Steam/Discord). Se não quer expor algo,
-                  não coloca. Simples.
+                <FAQItem q={t.pr1q} openLabel={t.open} closeLabel={t.close}>
+                  {t.pr1a}
                 </FAQItem>
 
-                <FAQItem q="Vocês guardam meus dados?">
-                  A gente só guarda o que você envia no anúncio. Sem login no MVP, então não tem perfil completo nem
-                  senha armazenada.
+                <FAQItem q={t.pr2q} openLabel={t.open} closeLabel={t.close}>
+                  {t.pr2a}
                 </FAQItem>
               </div>
             </section>
 
             <section id="problemas" className="space-y-4">
-              <SectionTitle title="Problemas comuns" subtitle="Quando algo não aparece ou dá ruim." />
+              <SectionTitle title={t.issuesTitle} subtitle={t.issuesSubtitle} />
               <div className="space-y-3">
-                <FAQItem q="Postei e não apareceu no feed. Por quê?">
-                  Normalmente é: anúncio expirado (data errada), erro no upload, ou filtro ativo (tag/região/busca).
-                  Testa abrindo o feed com “Limpar filtros”.
+                <FAQItem q={t.i1q} openLabel={t.open} closeLabel={t.close}>
+                  {t.i1a}
                 </FAQItem>
 
-                <FAQItem q="Meu print ficou esticado ou cortado estranho.">
-                  O feed usa proporção 16:10. Na criação, recorta e ajusta o zoom pra ficar certinho. Aí o card fica
-                  perfeito.
+                <FAQItem q={t.i2q} openLabel={t.open} closeLabel={t.close}>
+                  {t.i2a}
                 </FAQItem>
               </div>
             </section>
@@ -212,39 +217,54 @@ export default function FAQPage() {
           {/* Sidebar */}
           <aside className="space-y-4">
             <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-              <div className="text-sm font-semibold">Atalhos</div>
+              <div className="text-sm font-semibold">{t.shortcutsTitle}</div>
               <div className="mt-3 flex flex-wrap gap-2">
-                <a href="#geral" className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10">
-                  Geral
+                <a
+                  href="#geral"
+                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10"
+                >
+                  {t.shGeneral}
                 </a>
-                <a href="#postar" className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10">
-                  Postar
+                <a
+                  href="#postar"
+                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10"
+                >
+                  {t.shPost}
                 </a>
-                <a href="#expiracao" className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10">
-                  Expiração
+                <a
+                  href="#expiracao"
+                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10"
+                >
+                  {t.shExp}
                 </a>
-                <a href="#seguranca" className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10">
-                  Segurança
+                <a
+                  href="#seguranca"
+                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10"
+                >
+                  {t.shSafety}
                 </a>
-                <a href="#privacidade" className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10">
-                  Privacidade
+                <a
+                  href="#privacidade"
+                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10"
+                >
+                  {t.shPrivacy}
                 </a>
-                <a href="#problemas" className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10">
-                  Problemas
+                <a
+                  href="#problemas"
+                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/75 hover:bg-white/10"
+                >
+                  {t.shIssues}
                 </a>
               </div>
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-white/70 backdrop-blur">
-              <div className="font-semibold text-white">Dica de ouro</div>
-              <p className="mt-2">
-                Anúncio bom é anúncio que dá match: print legível + descrição objetiva + contato fácil. Se tá confuso,
-                ninguém chama.
-              </p>
+              <div className="font-semibold text-white">{t.tipTitle}</div>
+              <p className="mt-2">{t.tipBody}</p>
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-xs text-white/55 backdrop-blur">
-              Fan-made, sem afiliação oficial.🤝
+              {t.footer}
             </div>
           </aside>
         </div>
