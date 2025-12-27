@@ -114,7 +114,7 @@ export default function FAQPage() {
 
                 <FAQItem q="Vocês são oficiais do ARC Raiders?">
                   Não. É um projeto fan-made, sem afiliação com Embark/Nexon. O objetivo é organizar trocas, não
-                  “representar” o jogo.
+                  “representar” o jogo. Projeto Open Source
                 </FAQItem>
               </div>
             </section>

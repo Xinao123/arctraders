@@ -35,12 +35,18 @@ function detectClientLang(): Lang {
   const c = readCookie("arc_lang");
   if (c === "pt" || c === "en") return c;
 
+  try {
+    const ls = localStorage.getItem("arc_lang");
+    if (ls === "pt" || ls === "en") return ls;
+  } catch {}
+
   if (typeof navigator !== "undefined") {
     const nav = (navigator.language || "").toLowerCase();
     if (nav.startsWith("pt")) return "pt";
   }
   return "en";
 }
+
 
 function createImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -126,6 +132,28 @@ export default function NewListingPage() {
   }, []);
   const tAll = i18n[lang];
   const t = tAll.new;
+
+  useEffect(() => {
+  const onEvent = (e: Event) => {
+    const next = (e as CustomEvent<Lang>).detail;
+    if (next === "pt" || next === "en") setLang(next);
+    else setLang(detectClientLang());
+  };
+
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === "arc_lang" && (e.newValue === "pt" || e.newValue === "en")) {
+      setLang(e.newValue);
+    }
+  };
+
+  window.addEventListener("arc:lang", onEvent as any);
+  window.addEventListener("storage", onStorage);
+
+  return () => {
+    window.removeEventListener("arc:lang", onEvent as any);
+    window.removeEventListener("storage", onStorage);
+  };
+}, []);
 
   // Form fields
   const [offerText, setOfferText] = useState("");

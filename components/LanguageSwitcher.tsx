@@ -1,36 +1,77 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { Lang } from "@/lib/getLang";
 
-export default function LanguageSwitcher({
-  initialLang,
-  label,
-}: {
-  initialLang: "pt" | "en";
-  label: string;
-}) {
+function readCookie(name: string) {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function detectLangClient(): Lang {
+  const c = readCookie("arc_lang");
+  if (c === "pt" || c === "en") return c;
+
+  const ls = typeof window !== "undefined" ? window.localStorage.getItem("arc_lang") : null;
+  if (ls === "pt" || ls === "en") return ls;
+
+  const nav = typeof navigator !== "undefined" ? (navigator.language || "").toLowerCase() : "";
+  return nav.startsWith("pt") ? "pt" : "en";
+}
+
+export default function LanguageSwitcher() {
   const router = useRouter();
-  const pathname = usePathname();
-  const search = useSearchParams();
+  const [lang, setLang] = useState<Lang>("pt");
 
-  function setLang(lang: "pt" | "en") {
-    const params = new URLSearchParams(search.toString());
-    params.set("lang", lang); // middleware salva cookie e remove o param via redirect
-    router.replace(`${pathname}?${params.toString()}`);
+  useEffect(() => {
+    setLang(detectLangClient());
+  }, []);
+
+  function setLangCookie(next: Lang) {
+    // 1) cookie (30 dias)
+    document.cookie = `arc_lang=${encodeURIComponent(next)}; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax`;
+
+    // 2) localStorage (pra disparar storage event em outras abas e pra leitura rápida)
+    try {
+      localStorage.setItem("arc_lang", next);
+    } catch {}
+
+    // 3) evento pro app reagir sem refresh manual
+    window.dispatchEvent(new CustomEvent("arc:lang", { detail: next }));
+
+    // 4) atualiza server components (home/listings/etc) sem recarregar a página inteira
+    router.refresh();
   }
 
   return (
-    <div className="hidden items-center gap-2 sm:flex">
-      <span className="text-xs text-white/60">{label}</span>
-      <select
-        value={initialLang}
-        onChange={(e) => setLang(e.target.value as "pt" | "en")}
-        className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10"
-        aria-label={label}
+    <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-1">
+      <button
+        type="button"
+        onClick={() => {
+          setLang("pt");
+          setLangCookie("pt");
+        }}
+        className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+          lang === "pt" ? "bg-white text-black" : "text-white/70 hover:bg-white/10"
+        }`}
       >
-        <option value="pt">PT-BR</option>
-        <option value="en">EN</option>
-      </select>
+        PT-BR
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          setLang("en");
+          setLangCookie("en");
+        }}
+        className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+          lang === "en" ? "bg-white text-black" : "text-white/70 hover:bg-white/10"
+        }`}
+      >
+        EN
+      </button>
     </div>
   );
 }

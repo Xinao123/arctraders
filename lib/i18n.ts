@@ -217,7 +217,7 @@ export const i18n = {
       steamLabel: "Steam (link do perfil)",
       steamPh: "https://steamcommunity.com/id/...",
       discordLabel: "Discord (opcional)",
-      discordPh: "ex: yas#0001",
+      discordPh: "ex: User#0000",
 
       ruleRmt: "Sem dinheiro real (RMT)",
       ruleClear: "Print claro = mais chance de fechar",
@@ -335,7 +335,7 @@ export const i18n = {
       steamLabel: "Steam (profile link)",
       steamPh: "https://steamcommunity.com/id/...",
       discordLabel: "Discord (optional)",
-      discordPh: "ex: yas#0001",
+      discordPh: "ex: User#0000",
 
       ruleRmt: "No real-money trading (RMT)",
       ruleClear: "Clear screenshots get more replies",
