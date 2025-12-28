@@ -9,6 +9,7 @@ const copy = {
     faq: "FAQ",
     post: "Postar troca",
     lang: "Idioma",
+    feedback: "Feedback",
   },
   en: {
     home: "Home",
@@ -16,6 +17,7 @@ const copy = {
     faq: "FAQ",
     post: "Post trade",
     lang: "Language",
+    feedback: "Feedback",
   },
 } as const;
 
@@ -50,6 +52,10 @@ export default async function SiteHeader() {
 
           <Link href="/new" className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-black hover:opacity-90">
             {t.post}
+          </Link>
+
+           <Link href="/feedback" className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-black hover:opacity-90">
+            {t.feedback}
           </Link>
         </nav>
       </div>
