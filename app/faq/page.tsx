@@ -70,7 +70,6 @@ export default async function FAQPage() {
 
   return (
     <main className="min-h-screen bg-[#07080c] pt-20 text-white">
-      {/* Background */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_50%_0%,rgba(255,255,255,0.12),rgba(7,8,12,0))]" />
         <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
@@ -103,9 +102,8 @@ export default async function FAQPage() {
           </div>
         </div>
 
-        {/* Content */}
+   
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
-          {/* FAQ */}
           <div className="space-y-8">
             <section id="geral" className="space-y-4">
               <SectionTitle title={t.generalTitle} subtitle={t.generalSubtitle} />
@@ -192,7 +190,7 @@ export default async function FAQPage() {
             </section>
           </div>
 
-          {/* Sidebar */}
+
           <aside className="space-y-4">
             <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
               <div className="text-sm font-semibold">{t.shortcutsTitle}</div>

@@ -97,7 +97,7 @@ async function cropToFile(
 
   const rotRad = getRadianAngle(rotationDeg);
 
-  // canvas “safe” com a imagem rotacionada inteira
+  
   const safeCanvas = document.createElement("canvas");
   const safeCtx = safeCanvas.getContext("2d");
   if (!safeCtx) throw new Error("Canvas ctx não disponível.");
@@ -114,7 +114,7 @@ async function cropToFile(
   safeCtx.translate(-iw / 2, -ih / 2);
   safeCtx.drawImage(image, 0, 0, iw, ih);
 
-  // canvas final: exatamente o tamanho do recorte
+  
   const outCanvas = document.createElement("canvas");
   const outCtx = outCanvas.getContext("2d");
   if (!outCtx) throw new Error("Canvas ctx não disponível.");
@@ -163,7 +163,7 @@ async function safeJson(res: Response) {
 export default function NewListingPage() {
   const router = useRouter();
 
-  // lang + copy
+
   const [lang, setLang] = useState<Lang>("pt");
   useEffect(() => {
     setLang(detectClientLang());
@@ -193,7 +193,7 @@ export default function NewListingPage() {
     };
   }, []);
 
-  // Form fields
+
   const [offerText, setOfferText] = useState("");
   const [wantText, setWantText] = useState("");
   const [tagsText, setTagsText] = useState("");
@@ -202,11 +202,10 @@ export default function NewListingPage() {
   const [discordHandle, setDiscordHandle] = useState("");
   const [expiresIn, setExpiresIn] = useState<"5m" | "1d" | "3d" | "7d">("3d");
 
-  // Upload / status
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Image state
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalPreview, setOriginalPreview] = useState<string | null>(null);
   const [imgSize, setImgSize] = useState<ImgSize | null>(null);
@@ -214,7 +213,7 @@ export default function NewListingPage() {
   const [croppedFile, setCroppedFile] = useState<File | null>(null);
   const [croppedPreview, setCroppedPreview] = useState<string | null>(null);
 
-  // Crop modal
+
   const [rawSrc, setRawSrc] = useState<string | null>(null);
   const [isCropping, setIsCropping] = useState(false);
 
@@ -224,21 +223,21 @@ export default function NewListingPage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<PixelCrop | null>(null);
 
   const aspect = useMemo(() => {
-    // mantém a proporção original da imagem (sem forçar 16:10)
+    
     if (imgSize?.w && imgSize?.h) return imgSize.w / imgSize.h;
     return 4 / 3;
   }, [imgSize]);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // cleanup object URLs (unmount)
+
   useEffect(() => {
     return () => {
       if (originalPreview) URL.revokeObjectURL(originalPreview);
       if (croppedPreview) URL.revokeObjectURL(croppedPreview);
       if (rawSrc) URL.revokeObjectURL(rawSrc);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
   function splitTags(text: string) {
@@ -260,7 +259,7 @@ export default function NewListingPage() {
     setOriginalFile(file);
     setOriginalPreview(url);
 
-    // ao trocar imagem, volta pro "original"
+ 
     setCroppedFile(null);
     setCroppedPreview(null);
 
@@ -270,7 +269,7 @@ export default function NewListingPage() {
     setRotation(0);
     setCroppedAreaPixels(null);
 
-    // pega tamanho real pra manter proporção no recorte (quando abrir)
+
     try {
       const img = await createImage(url);
       const w = img.naturalWidth || img.width;
@@ -285,7 +284,6 @@ export default function NewListingPage() {
     if (!originalPreview) return;
     setError(null);
 
-    // abre com a imagem original (nada forçado)
     setRawSrc(originalPreview);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
@@ -313,7 +311,7 @@ export default function NewListingPage() {
 
     setSubmitting(true);
     try {
-      // 1) upload image
+     
       const fd = new FormData();
       fd.append("file", fileToUpload);
 
@@ -332,7 +330,7 @@ export default function NewListingPage() {
 
       if (!imageUrl) throw new Error(`${t.errUploadFail}: missing publicUrl/url.`);
 
-      // 2) create listing
+     
       const listingRes = await fetch("/api/listings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -367,7 +365,7 @@ export default function NewListingPage() {
 
   return (
     <main className="min-h-screen bg-[#07080c] text-white">
-      {/* Background */}
+  
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_50%_0%,rgba(255,255,255,0.12),rgba(7,8,12,0))]" />
         <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
@@ -398,7 +396,7 @@ export default function NewListingPage() {
         )}
 
         <form onSubmit={handleSubmit} className="mt-8 grid gap-6 lg:grid-cols-[1fr_420px]">
-          {/* Left */}
+        
           <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
             <div className="text-sm font-semibold">{t.detailsTitle}</div>
 
@@ -496,7 +494,7 @@ export default function NewListingPage() {
             </div>
           </div>
 
-          {/* Right */}
+        
           <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -528,8 +526,7 @@ export default function NewListingPage() {
             <div className="mt-4">
               {croppedPreview || originalPreview ? (
                 <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-                  {/* preview respeita a proporção original (sem forçar) */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+
                   <img
                     src={croppedPreview ?? originalPreview!}
                     alt={t.previewAlt}
@@ -580,7 +577,6 @@ export default function NewListingPage() {
         </form>
       </div>
 
-      {/* Crop Modal */}
       {isCropping && rawSrc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
           <div className="w-full max-w-3xl rounded-3xl border border-white/10 bg-[#0a0b10] p-4 shadow-2xl">
@@ -604,7 +600,6 @@ export default function NewListingPage() {
 
             <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_260px]">
               <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-                {/* altura fixa pra cropper funcionar bem, sem forçar proporção */}
                 <div className="h-[360px] w-full sm:h-[420px]" />
                 <Cropper
                   image={rawSrc}

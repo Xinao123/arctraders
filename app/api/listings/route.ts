@@ -17,8 +17,8 @@ function normalizeTagName(name: string) {
 function slugifyTag(name: string) {
   return normalizeTagName(name)
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // tira acentos
-    .replace(/[^a-z0-9 ]/g, "") // remove símbolos
+    .replace(/[\u0300-\u036f]/g, "") 
+    .replace(/[^a-z0-9 ]/g, "") 
     .trim()
     .replace(/\s+/g, "-");
 }
@@ -32,20 +32,20 @@ function computeExpiresAt(key: ExpiresKey) {
 }
 
 function pickExpiresKey(body: any): ExpiresKey | null {
-  // novo: expiresIn: "5m" | "1d" | "3d" | "7d"
+  
   if (typeof body?.expiresIn === "string") {
     const v = body.expiresIn.toLowerCase();
     if (v === "5m" || v === "1d" || v === "3d" || v === "7d") return v;
     return null;
   }
 
-  // antigo: expiresInDays: 1 | 3 | 7
+  
   const d = Number(body?.expiresInDays);
   if (d === 1) return "1d";
   if (d === 3) return "3d";
   if (d === 7) return "7d";
 
-  // default
+ 
   return "3d";
 }
 
@@ -53,19 +53,19 @@ async function ensureTag(tx: Prisma.TransactionClient, rawName: string) {
   const name = normalizeTagName(rawName);
   const slug = slugifyTag(name);
 
-  // 1) tenta por name
+
   const byName = await tx.tag.findUnique({ where: { name } });
   if (byName) return byName;
 
-  // 2) tenta por slug (evita colisão de slug único)
+
   const bySlug = await tx.tag.findUnique({ where: { slug } });
   if (bySlug) return bySlug;
 
-  // 3) cria
+
   try {
     return await tx.tag.create({ data: { name, slug } });
   } catch (e: any) {
-    // se deu race/colisão (P2002), pega o que foi criado por outro request
+   
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
       const again =
         (await tx.tag.findUnique({ where: { name } })) ??
@@ -80,14 +80,13 @@ export async function GET(req: Request) {
   try {
     const now = new Date();
 
-    // delete automático sem cron (quando alguém abre o feed)
     await prisma.listing.deleteMany({ where: { expiresAt: { lte: now } } });
 
     const { searchParams } = new URL(req.url);
     const q = (searchParams.get("q") ?? "").trim();
     const region = (searchParams.get("region") ?? "").trim();
     const tag = (searchParams.get("tag") ?? "").trim();
-    const sort = (searchParams.get("sort") ?? "new").trim(); // "new" | "expiring"
+    const sort = (searchParams.get("sort") ?? "new").trim(); 
 
     const where: any = {
       status: "ACTIVE",
@@ -181,7 +180,7 @@ export async function POST(req: Request) {
   if (!offerText) return NextResponse.json({ error: "offerText é obrigatório." }, { status: 400 });
   if (!wantText) return NextResponse.json({ error: "wantText é obrigatório." }, { status: 400 });
 
-  // evita anúncio fantasma
+
   if (!steamProfileUrl && !discordHandle) {
     return NextResponse.json(
       { error: "Informe pelo menos 1 contato (Steam ou Discord)." },
@@ -208,10 +207,9 @@ export async function POST(req: Request) {
     const now = new Date();
 
     const created = await prisma.$transaction(async (tx) => {
-      // delete automático sem cron (também no POST)
+    
       await tx.listing.deleteMany({ where: { expiresAt: { lte: now } } });
 
-      // reaproveita “usuário” se bater o mesmo contato (reduz lixo no DB)
       const or: any[] = [];
       if (steamProfileUrl) or.push({ steamProfileUrl });
       if (discordHandle) or.push({ discordHandle });

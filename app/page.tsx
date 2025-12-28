@@ -88,10 +88,9 @@ function ListingCard({
 }) {
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10">
-      {/* ✅ IMAGEM: qualquer resolução + sem borda preta (blur no fundo + contain na frente) */}
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
         <div className="relative h-[220px] w-full">
-          {/* Fundo blur */}
+    
           <Image
             src={listing.imageUrl}
             alt=""
@@ -102,7 +101,7 @@ function ListingCard({
             quality={95}
           />
 
-          {/* Imagem real (inteira) */}
+     
           <Image
             src={listing.imageUrl}
             alt={t.imageAlt}
@@ -112,7 +111,7 @@ function ListingCard({
             quality={95}
           />
 
-          {/* “vidro” leve pra integrar */}
+       
           <div className="absolute inset-0 ring-1 ring-inset ring-white/5" />
         </div>
       </div>
@@ -199,7 +198,6 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-[#07080c] text-white">
-      {/* Background */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_50%_0%,rgba(255,255,255,0.12),rgba(7,8,12,0))]" />
         <div
@@ -209,7 +207,7 @@ export default async function HomePage() {
         <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
       </div>
 
-      {/* Hero */}
+
       <section className="mx-auto max-w-6xl px-4 py-14 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
@@ -270,7 +268,6 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Live feed preview */}
           <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -318,7 +315,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* How it works */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <SectionTitle
           title={t.howTitle}

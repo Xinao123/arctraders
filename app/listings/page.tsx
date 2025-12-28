@@ -90,7 +90,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
   const q = firstParam(sp, "q", "").trim();
   const region = firstParam(sp, "region", "").trim();
   const tag = firstParam(sp, "tag", "").trim();
-  const sort = firstParam(sp, "sort", "new").trim(); // "new" | "expiring"
+  const sort = firstParam(sp, "sort", "new").trim();
 
   const base = { q, region, sort, tag };
 
@@ -101,7 +101,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
   let totalMatched = 0;
 
   try {
-    // limpa expirados quando abre o feed
+    
     await prisma.listing.deleteMany({
       where: { expiresAt: { lte: now } },
     });
@@ -199,7 +199,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
 
   return (
     <main className="min-h-screen bg-[#07080c] text-white">
-      {/* Background */}
+
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_50%_0%,rgba(255,255,255,0.12),rgba(7,8,12,0))]" />
         <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
@@ -231,7 +231,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
           </div>
         </div>
 
-        {/* Filters */}
+
         <form
           method="GET"
           className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur"
@@ -276,7 +276,6 @@ export default async function ListingsPage({ searchParams }: PageProps) {
             </div>
           </div>
 
-          {/* mantém tag quando clicar em aplicar */}
           <input type="hidden" name="tag" value={tag} />
 
           <div className="mt-4 flex items-center justify-between gap-3">
@@ -293,7 +292,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
             </button>
           </div>
 
-          {/* Popular tags */}
+
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="text-xs text-white/50">{t.popularTags}</span>
 
@@ -345,10 +344,9 @@ export default async function ListingsPage({ searchParams }: PageProps) {
                 key={l.id}
                 className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10"
               >
-                {/* ✅ IMAGEM: aceita qualquer resolução, sem cortar, sem borda preta */}
                 <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                   <div className="relative h-[260px] w-full">
-                    {/* Fundo (preenche com blur) */}
+            
                     <Image
                       src={l.imageUrl}
                       alt=""
@@ -359,7 +357,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
                       quality={95}
                     />
 
-                    {/* Imagem real (inteira) */}
+                
                     <Image
                       src={l.imageUrl}
                       alt={t.imageAlt}
@@ -369,7 +367,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
                       quality={95}
                     />
 
-                    {/* leve “vidro” pra integrar */}
+                   
                     <div className="absolute inset-0 ring-1 ring-inset ring-white/5" />
 
                     <div className="absolute left-3 top-3 flex flex-wrap gap-2">
