@@ -6,7 +6,7 @@ import type { Lang } from "@/lib/getLang";
 
 type Props = {
   initialLang?: Lang;
-  label?: string; // ex: "Idioma" / "Language"
+  label?: string; 
 };
 
 function readCookie(name: string) {
@@ -32,7 +32,7 @@ export default function LanguageSwitcher({ initialLang = "pt", label }: Props) {
   const router = useRouter();
   const [lang, setLang] = useState<Lang>(initialLang);
 
-  // garante que, no client, a gente usa o que está no cookie/localStorage
+  
   useEffect(() => {
     setLang(detectLangClient());
   }, []);
@@ -44,10 +44,10 @@ export default function LanguageSwitcher({ initialLang = "pt", label }: Props) {
       localStorage.setItem("arc_lang", next);
     } catch {}
 
-    // avisa páginas client (tipo /new) sem refresh manual
+   
     window.dispatchEvent(new CustomEvent("arc:lang", { detail: next }));
 
-    // atualiza Server Components (home/listings/header server)
+    
     router.refresh();
   }
 
