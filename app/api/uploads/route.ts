@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export async function POST(req: Request) {
   const contentType = req.headers.get("content-type") || "";
 
-  // Se cair aqui, você está mandando JSON sem querer
+ 
   if (!contentType.includes("multipart/form-data")) {
     return NextResponse.json(
       { error: `Content-Type inválido: ${contentType}` },

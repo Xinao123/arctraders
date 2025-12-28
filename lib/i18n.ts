@@ -201,6 +201,45 @@ type FAQDict = {
   footer: string;
 };
 
+type FeedbackDict = {
+  badge: string;
+  title: string;
+  subtitle: string;
+
+  backHome: string;
+  backFeed: string;
+
+  kindLabel: string;
+  kindSuggestion: string;
+  kindBug: string;
+
+  messageLabel: string;
+  messagePh: string;
+  messageHint: string;
+
+  contactLabel: string;
+  contactPh: string;
+  contactHint: string;
+
+  pageLabel: string;
+  pagePh: string;
+
+  send: string;
+  sending: string;
+
+  successTitle: string;
+  successBody: string;
+
+  errMessageShort: string;
+  errMessageLong: string;
+  errContactLong: string;
+  errUrlLong: string;
+  errSendFail: string;
+  errTryAgain: string;
+
+  footer: string;
+};
+
 type Dict = {
   badge: string;
   title: string;
@@ -252,6 +291,7 @@ type Dict = {
   new: NewDict;
   listings: ListingsDict;
   faq: FAQDict;
+  feedback: FeedbackDict;
 };
 
 export const i18n = {
@@ -401,10 +441,10 @@ export const i18n = {
       popularTags: "Palavras-chave populares:",
       allTags: "Todas",
 
-      emptyFilters: "Não encontramos resultados. Tente mudar a região, as palavras ou a busca.",
+      emptyFilters:
+        "Não encontramos resultados. Tente mudar a região, as palavras ou a busca.",
 
       imageAlt: "Imagem do item",
-      
 
       createdAtTz: "",
       dash: "—",
@@ -528,6 +568,48 @@ export const i18n = {
         "Um anúncio bom é fácil de entender: imagem nítida, descrição clara e contato simples. Se ficar confuso, as pessoas não entram em contato.",
 
       footer: "Feito por fãs. Sem ligação oficial.",
+    },
+
+    // Feedback
+    feedback: {
+      badge: "sugestões e bugs",
+      title: "Conta pra gente o que melhorar",
+      subtitle: "Achou um problema ou tem uma ideia? Escreve aqui. É rapidinho.",
+
+      backHome: "Início",
+      backFeed: "Ver anúncios",
+
+      kindLabel: "Tipo",
+      kindSuggestion: "Sugestão",
+      kindBug: "Problema no site",
+
+      messageLabel: "Sua mensagem",
+      messagePh:
+        "Explica com calma o que aconteceu ou o que você gostaria de ver no site…",
+      messageHint:
+        "Dica: se for um problema, diz o que você clicou e o que você esperava que acontecesse.",
+
+      contactLabel: "Contato (opcional)",
+      contactPh: "Ex: seu Discord, Steam, ou e-mail",
+      contactHint: "Se você quiser resposta, deixa um contato. Se não, tudo certo.",
+
+      pageLabel: "Página (opcional)",
+      pagePh: "Ex: cole o link da página onde aconteceu",
+
+      send: "Enviar",
+      sending: "Enviando…",
+
+      successTitle: "Valeu! Recebido ✅",
+      successBody: "A gente vai ler e usar isso pra melhorar o site.",
+
+      errMessageShort: "Escreve um pouquinho mais pra gente entender direitinho.",
+      errMessageLong: "Sua mensagem ficou grande demais. Tenta encurtar um pouco.",
+      errContactLong: "O contato ficou longo demais.",
+      errUrlLong: "O link ficou longo demais.",
+      errSendFail: "Não deu pra enviar agora.",
+      errTryAgain: "Deu ruim aqui. Tenta de novo.",
+
+      footer: "Obrigado por ajudar a melhorar o ARC Traders.",
     },
   },
 
@@ -680,7 +762,6 @@ export const i18n = {
       emptyFilters: "No results found. Try changing the region, keywords, or search.",
 
       imageAlt: "Item image",
-     
 
       createdAtTz: "",
       dash: "—",
@@ -764,8 +845,7 @@ export const i18n = {
       e1a:
         "You choose the duration when creating the post. When time ends, the post is removed from the list automatically.",
       e2q: "The time ended. Did I lose everything?",
-      e2a:
-        "No. Just publish again. If you want, you can reuse the same image and text.",
+      e2a: "No. Just publish again. If you want, you can reuse the same image and text.",
 
       s1q: "Are real-money deals allowed (selling, cash apps)?",
       s1a:
@@ -804,6 +884,46 @@ export const i18n = {
         "A good post is easy to understand: clear image, clear description, and simple contact. If it’s confusing, people won’t message you.",
 
       footer: "Made by fans. Not officially affiliated.",
+    },
+
+    // Feedback
+    feedback: {
+      badge: "suggestions and bugs",
+      title: "Help us improve the site",
+      subtitle: "Found a problem or got an idea? Send it here. Quick and simple.",
+
+      backHome: "Home",
+      backFeed: "Open the feed",
+
+      kindLabel: "Type",
+      kindSuggestion: "Suggestion",
+      kindBug: "Site issue",
+
+      messageLabel: "Your message",
+      messagePh: "Explain what happened or what you would like to see on the site…",
+      messageHint: "Tip: if it’s an issue, tell us what you clicked and what you expected.",
+
+      contactLabel: "Contact (optional)",
+      contactPh: "e.g. Discord, Steam, or email",
+      contactHint: "If you want a reply, leave a contact. If not, no problem.",
+
+      pageLabel: "Page (optional)",
+      pagePh: "e.g. paste the page link where it happened",
+
+      send: "Send",
+      sending: "Sending…",
+
+      successTitle: "Thanks! Received ✅",
+      successBody: "We’ll read it and use it to improve the site.",
+
+      errMessageShort: "Write a bit more so we can understand.",
+      errMessageLong: "Your message is too long. Please shorten it a bit.",
+      errContactLong: "Contact is too long.",
+      errUrlLong: "Link is too long.",
+      errSendFail: "Couldn’t send right now.",
+      errTryAgain: "Something went wrong. Try again.",
+
+      footer: "Thanks for helping improve ARC Traders.",
     },
   },
 } satisfies Record<Lang, Dict>;

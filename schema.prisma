@@ -210,3 +210,28 @@ model Block {
 
   @@id([blockerId, blockedId])
 }
+
+enum FeedbackKind {
+  SUGGESTION
+  BUG
+}
+
+enum FeedbackStatus {
+  OPEN
+  TRIAGED
+  CLOSED
+}
+
+model Feedback {
+  id        String         @id @default(cuid())
+  createdAt DateTime       @default(now())
+
+  kind      FeedbackKind
+  status    FeedbackStatus @default(OPEN)
+
+  message   String
+  contact   String?
+  pageUrl   String?
+  lang      String?
+  userAgent String?
+}
