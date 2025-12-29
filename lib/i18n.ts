@@ -452,7 +452,7 @@ export const i18n = {
       offer: "Oferece",
       want: "Procura",
 
-      contactFallback: "contato no anúncio",
+      contactFallback: "",
       noSteam: "sem Steam",
       steam: "Steam",
 
@@ -769,7 +769,7 @@ export const i18n = {
       offer: "Offering",
       want: "Looking for",
 
-      contactFallback: "contact in the post",
+      contactFallback: "",
       noSteam: "no Steam",
       steam: "Steam",
 
