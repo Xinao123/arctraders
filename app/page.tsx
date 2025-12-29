@@ -86,73 +86,115 @@ function ListingCard({
     imageAlt: string;
   };
 }) {
+  const steam = listing.user?.steamProfileUrl ?? null;
+  const discord = listing.user?.discordHandle ?? null;
+
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/10">
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+    <article className="group rounded-3xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur transition hover:border-white/20 hover:bg-white/[0.07]">
+      {/* Image */}
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
         <div className="relative h-[220px] w-full">
-    
+          {/* fundo “ambient” pra matar borda preta */}
           <Image
             src={listing.imageUrl}
             alt=""
             aria-hidden
             fill
-            className="object-cover scale-110 blur-2xl opacity-40"
+            className="object-cover scale-110 blur-2xl opacity-35"
             sizes="(max-width: 768px) 100vw, 33vw"
             quality={95}
           />
 
-     
-          <Image
-            src={listing.imageUrl}
-            alt={t.imageAlt}
-            fill
-            className="object-contain"
-            sizes="(max-width: 768px) 100vw, 33vw"
-            quality={95}
-          />
+          {/* gradiente por cima pra ficar mais “premium” */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/25" />
 
-       
+          {/* imagem principal com padding (não encosta nas bordas) */}
+          <div className="absolute inset-0 p-3">
+            <div className="relative h-full w-full">
+              <Image
+                src={listing.imageUrl}
+                alt={t.imageAlt}
+                fill
+                className="object-contain drop-shadow-[0_10px_25px_rgba(0,0,0,0.35)]"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={95}
+              />
+            </div>
+          </div>
+
+          {/* ring suave */}
           <div className="absolute inset-0 ring-1 ring-inset ring-white/5" />
         </div>
       </div>
 
+      {/* Text */}
       <div className="mt-3">
-        <div className="text-xs text-white/50">{t.cardOffer}</div>
-        <div className="mt-1 line-clamp-1 text-sm font-semibold text-white">
-          {listing.offerText}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-[11px] uppercase tracking-wide text-white/45">
+              {t.cardOffer}
+            </div>
+            <div className="mt-1 line-clamp-2 text-sm font-semibold text-white">
+              {listing.offerText}
+            </div>
+          </div>
+
+          <span className="shrink-0 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-white/65">
+            {listing.region ?? "—"}
+          </span>
         </div>
 
-        <div className="mt-3 text-xs text-white/50">{t.cardWant}</div>
-        <div className="mt-1 line-clamp-1 text-sm text-white/80">{listing.wantText}</div>
-
-        <div className="mt-3 flex flex-wrap gap-2">
-          {listing.tags.slice(0, 6).map((x) => (
-            <Pill key={x.tagId}>{x.tag.name}</Pill>
-          ))}
+        <div className="mt-3 text-[11px] uppercase tracking-wide text-white/45">
+          {t.cardWant}
         </div>
+        <div className="mt-1 line-clamp-2 text-sm text-white/80">{listing.wantText}</div>
 
-        <div className="mt-4 flex items-center justify-between text-xs text-white/55">
-          <span>{listing.region ?? "—"}</span>
+        {/* Tags */}
+        {listing.tags?.length ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {listing.tags.slice(0, 6).map((x) => (
+              <Pill key={x.tagId}>{x.tag.name}</Pill>
+            ))}
+          </div>
+        ) : null}
 
-          {listing.user?.steamProfileUrl ? (
-            <a
-              href={listing.user.steamProfileUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10"
-            >
-              Steam
-            </a>
-          ) : listing.user?.discordHandle ? (
-            <span className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[11px] text-white/70">
-              {t.discordAvailable}
-            </span>
-          ) : (
-            <span className="text-white/35">{t.noContact}</span>
-          )}
+        {/* Contacts */}
+        <div className="mt-4 flex items-center justify-between gap-3 text-xs">
+          <div className="truncate text-white/45">
+            {/* espaço pra você colocar depois “há X min” se quiser */}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {steam ? (
+              <a
+                href={steam}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/10"
+                title="Steam"
+              >
+                <span className="text-[13px]">🎮</span>
+                Steam
+              </a>
+            ) : null}
+
+            {discord ? (
+              <span
+                className="inline-flex max-w-[170px] items-center gap-2 truncate rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[11px] text-white/75"
+                title={discord}
+              >
+                <span className="text-[13px]">💬</span>
+                <span className="truncate">{discord}</span>
+              </span>
+            ) : null}
+
+            {!steam && !discord ? (
+              <span className="text-white/35">{t.noContact}</span>
+            ) : null}
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -200,13 +242,10 @@ export default async function HomePage() {
     <main className="min-h-screen bg-[#07080c] text-white">
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_50%_0%,rgba(255,255,255,0.12),rgba(7,8,12,0))]" />
-        <div
-          className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]"
-        />
+        <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
         <div className="absolute -top-24 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
       </div>
-
 
       <section className="mx-auto max-w-6xl px-4 py-14 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
