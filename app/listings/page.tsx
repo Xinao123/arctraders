@@ -407,8 +407,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
                     <div className="absolute inset-0 ring-1 ring-inset ring-white/5" />
                   </div>
                 </div>
-
-                {/* ✅ VERSÃO 2: prazo fora da imagem (nunca sobrepõe o item) */}
+              
                 <div className="mt-3 flex items-center justify-between gap-3">
                   <div className="text-xs text-white/50">
                     {l.createdAt ? formatDate(new Date(l.createdAt), lang) : ""}
