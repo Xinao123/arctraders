@@ -1,83 +1,69 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import type { Lang } from "@/lib/getLang";
 
 type Props = {
-  initialLang?: Lang;
-  label?: string; 
+  initialLang: Lang;
+  label?: string; // vamos ignorar visualmente e manter acessível
 };
 
-function readCookie(name: string) {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
+function setLangEverywhere(next: Lang) {
+  // cookie (1 ano)
+  document.cookie = `arc_lang=${encodeURIComponent(next)}; path=/; max-age=31536000; samesite=lax`;
 
-function detectLangClient(): Lang {
-  const c = readCookie("arc_lang");
-  if (c === "pt" || c === "en") return c;
-
+  // localStorage
   try {
-    const ls = localStorage.getItem("arc_lang");
-    if (ls === "pt" || ls === "en") return ls;
+    localStorage.setItem("arc_lang", next);
   } catch {}
 
-  const nav = typeof navigator !== "undefined" ? (navigator.language || "").toLowerCase() : "";
-  return nav.startsWith("pt") ? "pt" : "en";
+  // avisa o app (você já usa isso nas pages)
+  window.dispatchEvent(new CustomEvent("arc:lang", { detail: next }));
 }
 
-export default function LanguageSwitcher({ initialLang = "pt", label }: Props) {
-  const router = useRouter();
+export default function LanguageSwitcher({ initialLang, label }: Props) {
   const [lang, setLang] = useState<Lang>(initialLang);
 
-  
   useEffect(() => {
-    setLang(detectLangClient());
-  }, []);
+    setLang(initialLang);
+  }, [initialLang]);
 
-  function setLangCookie(next: Lang) {
-    document.cookie = `arc_lang=${encodeURIComponent(next)}; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax`;
-
-    try {
-      localStorage.setItem("arc_lang", next);
-    } catch {}
-
-   
-    window.dispatchEvent(new CustomEvent("arc:lang", { detail: next }));
-
-    
-    router.refresh();
-  }
+  const isPT = lang === "pt";
 
   return (
     <div className="flex items-center gap-2">
-      {label ? <span className="hidden text-xs text-white/50 sm:inline">{label}</span> : null}
+      {/* acessibilidade sem comer layout */}
+      <span className="sr-only">{label ?? "Language"}</span>
 
-      <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-1">
+      <div className="inline-flex h-9 items-center rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur">
         <button
           type="button"
           onClick={() => {
             setLang("pt");
-            setLangCookie("pt");
+            setLangEverywhere("pt");
           }}
-          className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
-            lang === "pt" ? "bg-white text-black" : "text-white/70 hover:bg-white/10"
+          className={`h-7 rounded-lg px-2.5 text-xs font-semibold transition ${
+            isPT
+              ? "bg-white text-black"
+              : "text-white/75 hover:bg-white/10 hover:text-white"
           }`}
+          aria-pressed={isPT}
         >
-          PT-BR
+          PT
         </button>
 
         <button
           type="button"
           onClick={() => {
             setLang("en");
-            setLangCookie("en");
+            setLangEverywhere("en");
           }}
-          className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
-            lang === "en" ? "bg-white text-black" : "text-white/70 hover:bg-white/10"
+          className={`h-7 rounded-lg px-2.5 text-xs font-semibold transition ${
+            !isPT
+              ? "bg-white text-black"
+              : "text-white/75 hover:bg-white/10 hover:text-white"
           }`}
+          aria-pressed={!isPT}
         >
           EN
         </button>
